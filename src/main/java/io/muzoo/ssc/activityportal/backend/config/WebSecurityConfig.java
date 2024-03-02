@@ -1,15 +1,24 @@
 package io.muzoo.ssc.activityportal.backend.config;
 
 import io.muzoo.ssc.activityportal.backend.auth.OurUserDetailsService;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+
+import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
@@ -30,16 +39,16 @@ public class WebSecurityConfig{
 	}
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http
-			.authorizeHttpRequests((requests) -> requests
-				.requestMatchers("/", "/home").permitAll()
-				.anyRequest().authenticated()
-			)
-			.formLogin((form) -> form
-				.loginPage("/login")
-				.permitAll()
-			)
-			.logout((logout) -> logout.permitAll());
+		http.csrf(csrf -> csrf.disable())
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/", "/api/login", "/api/logout").permitAll()
+						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+						.anyRequest().authenticated()
+				)
+				.exceptionHandling((exceptionHandling) ->
+						exceptionHandling
+								.authenticationEntryPoint(new JsonHTTP403ForbiddenEntryPoint())
+				);
 
 		return http.build();
 	}
@@ -47,5 +56,15 @@ public class WebSecurityConfig{
 	@Bean
 	public UserDetailsService userDetailsService() {
 		return ourUserDetailsService;
+	}
+
+	class JsonHTTP403ForbiddenEntryPoint implements AuthenticationEntryPoint {
+
+		@Override
+		public void commence(HttpServletRequest request,
+							 HttpServletResponse response,
+							 AuthenticationException authException) throws IOException, ServletException {
+			response.getWriter().println("User not authorized for access.");
+		}
 	}
 }
