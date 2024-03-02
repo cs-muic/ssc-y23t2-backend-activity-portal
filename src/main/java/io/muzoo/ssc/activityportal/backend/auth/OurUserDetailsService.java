@@ -1,25 +1,25 @@
-package io.muzoo.ssc.activityportal.backend;
+package io.muzoo.ssc.activityportal.backend.auth;
 
+import io.muzoo.ssc.activityportal.backend.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class OurUserDetailsService implements UserDetailsService {
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if ("admin".equals(username)) {
-            return User.withUsername(username)
-				.password(passwordEncoder.encode("123456"))
-				.roles("USER")
+        io.muzoo.ssc.activityportal.backend.User u = userRepository.findFirstByUsername(username);
+        if (u != null) {
+            return User.withUsername(u.getUsername())
+				.password(u.getPassword())
+				.roles(u.getRole())
 				.build();
         } else {
             throw new UsernameNotFoundException("Invalid username or password");

@@ -19,5 +19,7 @@ public class User {
 
     private String password;
 
-    private String group;
+    private String role;
+
+    private String displayName;
 }
