@@ -1,4 +1,4 @@
-package com.example.securingweb;
+package io.muzoo.ssc.activityportal.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
