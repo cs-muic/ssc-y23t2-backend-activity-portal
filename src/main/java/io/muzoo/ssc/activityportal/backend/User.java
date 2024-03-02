@@ -1,0 +1,23 @@
+package io.muzoo.ssc.activityportal.backend;
+
+import lombok.Getter;
+import lombok.Setter;
+import jakarta.persistence.*;
+
+@Entity
+@Getter
+@Setter
+@Table(name = "tbl_user")
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @Column(unique = true)
+    private String username;
+
+    private String password;
+
+    private String group;
+}
