@@ -43,7 +43,7 @@ public class WebSecurityConfig{
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/", "/api/login", "/api/logout").permitAll()
+						.requestMatchers("/", "/api/login", "/api/logout", "/api/whoami").permitAll()
 						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 						.anyRequest().authenticated()
 				)
