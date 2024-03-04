@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 public class AjaxUtils {
+    /**
+     * Ajax stuffs
+     */
     public static String convertToString(Object objectValue) {
         StringWriter writer = new StringWriter();
         ObjectMapper mapper = new ObjectMapper();

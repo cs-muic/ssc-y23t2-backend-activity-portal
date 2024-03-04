@@ -16,7 +16,8 @@ public class WhoamiController {
     private UserRepository userRepository;
 
     /**
-     * Make sure that all API path begins with /api.
+     * Get the info of the logged in user
+     * @return
      */
     @GetMapping("/api/whoami")
     public WhoamiDTO whoami(){
@@ -27,7 +28,7 @@ public class WhoamiController {
                 org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) principal;
                 User u = userRepository.findFirstByUsername(user.getUsername());
                 return WhoamiDTO.builder()
-                        .loggedIn(true)
+                        .isLoggedIn(true)
                         .displayName(u.getDisplayName())
                         .role(u.getRole())
                         .username(u.getUsername())
@@ -35,12 +36,12 @@ public class WhoamiController {
             } else {
                 //is not logged in
                 return WhoamiDTO.builder()
-                        .loggedIn(false)
+                        .isLoggedIn(false)
                         .build();
             }
         } catch (Exception e) {
             return WhoamiDTO.builder()
-                    .loggedIn(false)
+                    .isLoggedIn(false)
                     .build();
         }
     }

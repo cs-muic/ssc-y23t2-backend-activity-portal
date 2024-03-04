@@ -8,6 +8,9 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+/**
+ * initial setup for starting up the server
+ */
 @Component
 public class InitApplicationRunner implements ApplicationRunner {
     @Autowired

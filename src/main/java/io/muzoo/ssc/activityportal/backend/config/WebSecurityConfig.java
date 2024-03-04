@@ -22,11 +22,20 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import java.io.IOException;
 
+/**
+ * File for configuring the security
+ */
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig{
+	/**
+	 * having an autowired makes a circular dependency
+	 */
 	OurUserDetailsService ourUserDetailsService = new OurUserDetailsService();
 
+	/**
+	 * Setting the user details service and encoder
+	 */
 	@Bean
 	public DaoAuthenticationProvider authProvider() {
 		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -35,18 +44,30 @@ public class WebSecurityConfig{
 		return authProvider;
 	}
 
+	/**
+	 * the password encoder
+	 * @return the desired encoder
+	 */
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+
+	/**
+	 * The security filter
+	 */
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
+						//allow all access
 						.requestMatchers("/", "/api/login", "/api/logout", "/api/whoami").permitAll()
+						//allow OPTIONS access
 						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+						//if authenticated, allow access
 						.anyRequest().authenticated()
 				)
+				//handling the exception
 				.exceptionHandling((exceptionHandling) ->
 						exceptionHandling
 								.authenticationEntryPoint(new JsonHTTP403ForbiddenEntryPoint())
@@ -55,11 +76,17 @@ public class WebSecurityConfig{
 		return http.build();
 	}
 
+	/**
+	 * User details
+	 */
 	@Bean
 	public UserDetailsService userDetailsService() {
 		return ourUserDetailsService;
 	}
 
+	/**
+	 * What will be sent when entry is forbidden
+	 */
 	class JsonHTTP403ForbiddenEntryPoint implements AuthenticationEntryPoint {
 
 		@Override

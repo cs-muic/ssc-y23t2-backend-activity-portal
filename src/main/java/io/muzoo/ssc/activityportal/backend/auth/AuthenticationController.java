@@ -9,8 +9,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller that involves the APIs for authenticating
+ */
 @RestController
 public class AuthenticationController {
+    /**
+     * A simple check for whether the user is logged in or not
+     * @return status on whether the user is logged in or not
+     */
     @GetMapping("/api/test")
     public SimpleResponseDTO test() {
         return SimpleResponseDTO
@@ -20,6 +27,11 @@ public class AuthenticationController {
                 .build();
     }
 
+    /**
+     * The login API
+     * @param request is the data that will be sent along with the post method
+     * @return status on whether the login passed or not
+     */
     @PostMapping("/api/login")
     public SimpleResponseDTO login(HttpServletRequest request){
         String username = request.getParameter("username");
@@ -44,6 +56,11 @@ public class AuthenticationController {
         }
     }
 
+    /**
+     * Logout API
+     * @param request
+     * @return logout status
+     */
     @GetMapping("/api/logout")
     public SimpleResponseDTO logout(HttpServletRequest request) {
         try {

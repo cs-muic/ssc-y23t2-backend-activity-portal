@@ -11,8 +11,8 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class WhoamiDTO {
 
-    private boolean loggedIn = false;
-    private String username;
-    private String role;
-    private String displayName;
+    private boolean isLoggedIn = false;
+    private String username = null;
+    private String role = "";
+    private String displayName = null;
 }
