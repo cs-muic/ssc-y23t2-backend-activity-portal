@@ -92,7 +92,6 @@ dependency-reduced-pom.xml
 /scratch
 .gradle
 .idea
-*.iml
 README.html
 build.gradle
 gradle/
