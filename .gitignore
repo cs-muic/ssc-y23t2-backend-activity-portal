@@ -94,11 +94,8 @@ dependency-reduced-pom.xml
 .idea
 *.iml
 README.html
-.mvn/
 build.gradle
 gradle/
 gradlew
 gradlew.bat
-mvnw
-mvnw.cmd
 settings.gradle
