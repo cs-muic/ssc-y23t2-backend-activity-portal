@@ -61,7 +61,7 @@ public class WebSecurityConfig{
 		http.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
 						//allow all access
-						.requestMatchers("/", "/api/login", "/api/logout", "/api/whoami").permitAll()
+						.requestMatchers("/", "/api/login", "/api/logout", "/api/whoami", "/api/create-account").permitAll()
 						//allow OPTIONS access
 						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 						//if authenticated, allow access
