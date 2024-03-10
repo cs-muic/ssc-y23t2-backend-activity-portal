@@ -2,9 +2,7 @@ package io.muzoo.ssc.activityportal.backend.user;
 
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
 import io.muzoo.ssc.activityportal.backend.User;
-import io.muzoo.ssc.activityportal.backend.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,32 +11,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class CreateAccountController {
 
     @Autowired
-    private UserRepository userRepository;
+    private CreateAccountService createAccountService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    /**
-     * Create new account
-     * @return status on whether the account is created or not
-     */
 
     @PostMapping("/api/create-account")
     public SimpleResponseDTO signup(@RequestBody User user) {
-        if (userRepository.findFirstByUsername(user.getUsername()) != null) {
+        if (createAccountService.createAccount(user)) {
+            return SimpleResponseDTO.builder()
+                    .success(true)
+                    .message("Account created successfully")
+                    .build();
+        } else {
             return SimpleResponseDTO.builder()
                     .success(false)
-                    .message("Username already exists")
+                    .message("Failed to create account")
                     .build();
         }
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole("USER");
-        userRepository.save(user);
-
-        return SimpleResponseDTO.builder()
-                .success(true)
-                .message("Account created successfully")
-                .build();
     }
 }
