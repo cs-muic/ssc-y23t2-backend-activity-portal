@@ -1,16 +1,23 @@
 package io.muzoo.ssc.activityportal.backend.activity;
 
 import io.muzoo.ssc.activityportal.backend.Activity;
+import io.muzoo.ssc.activityportal.backend.ActivityRepository;
+import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
 public class ActivityController {
+
+    @Autowired
+    private ActivityRepository activityRepository;
     @Autowired
     private ActivityService activityService;
 
@@ -21,7 +28,14 @@ public class ActivityController {
     }
 
     @PostMapping("api/create-activity")
-    public Activity createActivity(Activity activity) {
-        return activityService.createActivity(activity);
+    public SimpleResponseDTO createActivity(@RequestBody Activity activity) {
+        System.out.println(activity.getName());
+        try {
+            activityRepository.save(activity);
+            return SimpleResponseDTO.builder().success(true).message("Activity created successfully").build();
+
+        } catch (Exception e) {
+            return SimpleResponseDTO.builder().success(false).message("Failed to create activity: " + e.getMessage()).build();
+        }
     }
 }
