@@ -25,7 +25,6 @@ public class CreateAccountController {
 
     @PostMapping("/api/create-account")
     public SimpleResponseDTO signup(@RequestBody User user) {
-        System.out.println(user.getUsername());
         if (userRepository.findFirstByUsername(user.getUsername()) != null) {
             return SimpleResponseDTO.builder()
                     .success(false)
