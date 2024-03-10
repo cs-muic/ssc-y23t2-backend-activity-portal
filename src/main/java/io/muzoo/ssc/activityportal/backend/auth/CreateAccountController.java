@@ -20,6 +20,7 @@ public class CreateAccountController {
 
     /**
      * Create new account
+     *
      * @return status on whether the account is created or not
      */
 
@@ -27,19 +28,13 @@ public class CreateAccountController {
     public SimpleResponseDTO signup(@RequestBody User user) {
         System.out.println(user.getUsername());
         if (userRepository.findFirstByUsername(user.getUsername()) != null) {
-            return SimpleResponseDTO.builder()
-                    .success(false)
-                    .message("Username already exists")
-                    .build();
+            return SimpleResponseDTO.builder().success(false).message("Username already exists").build();
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole("USER");
         userRepository.save(user);
 
-        return SimpleResponseDTO.builder()
-                .success(true)
-                .message("Account created successfully")
-                .build();
+        return SimpleResponseDTO.builder().success(true).message("Account created successfully").build();
     }
 }
