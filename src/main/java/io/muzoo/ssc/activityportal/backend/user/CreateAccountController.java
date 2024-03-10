@@ -1,4 +1,4 @@
-package io.muzoo.ssc.activityportal.backend.auth;
+package io.muzoo.ssc.activityportal.backend.user;
 
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
 import io.muzoo.ssc.activityportal.backend.User;
