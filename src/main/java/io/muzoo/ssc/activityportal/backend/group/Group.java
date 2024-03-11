@@ -21,7 +21,7 @@ public class Group {
     @Column(name="owner_ID")
     private long ownerID;
     @Column(name="is_private")
-    private boolean isPrivate;
+    private Boolean isPrivate;
     @Column(name="public_description")
     private String publicDescription;
     @Column(name="private_description")
