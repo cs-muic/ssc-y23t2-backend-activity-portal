@@ -4,14 +4,17 @@ import io.muzoo.ssc.activityportal.backend.Activity;
 import io.muzoo.ssc.activityportal.backend.ActivityRepository;
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
+/**
+TODO:
+ 1. End time can't be before start time
+ 2. Time clean up time and delete activity after cleanup time has been reached
+ 3. Edit activity
+ 4. Delete activity
+**/
 
 @RestController
 public class ActivityController {
@@ -21,12 +24,10 @@ public class ActivityController {
     @Autowired
     private ActivityService activityService;
 
-
-    @GetMapping("api/get-activity")
-    public List<Activity> getActivity() {
-        return activityService.getAllActivities();
-    }
-
+    /**
+     * @param activity Activity object to be created
+     * @return SimpleResponseDTO with success/fail and message
+     */
     @PostMapping("api/create-activity")
     public SimpleResponseDTO createActivity(@RequestBody Activity activity) {
         System.out.println(activity.getName());
