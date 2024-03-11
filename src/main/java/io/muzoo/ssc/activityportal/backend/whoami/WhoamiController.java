@@ -32,6 +32,7 @@ public class WhoamiController {
                         .displayName(u.getDisplayName())
                         .role(u.getRole())
                         .username(u.getUsername())
+                        .userID(u.getId())
                         .build();
             } else {
                 //is not logged in

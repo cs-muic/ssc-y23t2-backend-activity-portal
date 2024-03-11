@@ -12,11 +12,18 @@ public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String name;
+    @Column(name="group_name")
+    private String groupName;
+    @Column(name="max_member")
     private int maxMember;
+    @Column(name="member_count")
     private int memberCount;
+    @Column(name="owner_ID")
     private long ownerID;
+    @Column(name="is_private")
     private boolean isPrivate;
+    @Column(name="public_description")
     private String publicDescription;
+    @Column(name="private_description")
     private String privateDescription;
 }

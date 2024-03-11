@@ -15,4 +15,5 @@ public class WhoamiDTO {
     private String username = null;
     private String role = "";
     private String displayName = null;
+    private Long userID = null;
 }
