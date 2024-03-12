@@ -22,4 +22,5 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
      */
 
     void deleteById(Long id);
+
 }

@@ -1,10 +1,12 @@
 package io.muzoo.ssc.activityportal.backend.activity.Activity;
 
+import io.muzoo.ssc.activityportal.backend.User;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -27,4 +29,6 @@ public class Activity {
     private boolean auto_delete_overtime;
     @Column(name = "description")
     private String description;
+    @ManyToMany(mappedBy = "activities")
+    private Set<User> users;
 }

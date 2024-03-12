@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.core.userdetails.User;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 public class ActivityController {
@@ -23,6 +25,17 @@ public class ActivityController {
     private UserRepository userRepository;
 
 
+    private ActivityDTO mapToDTO(Activity activity) {
+        ActivityDTO dto = new ActivityDTO();
+        dto.setId(activity.getId());
+        dto.setName(activity.getName());
+        dto.setStart_time(activity.getStart_time());
+        dto.setEnd_time(activity.getEnd_time());
+        dto.setCleanup_date(activity.getCleanup_date());
+        dto.setAuto_delete_overtime(activity.isAuto_delete_overtime());
+        dto.setDescription(activity.getDescription());
+        return dto;
+    }
 
     /**
      * @param activity Activity object to be created
@@ -41,8 +54,22 @@ public class ActivityController {
     }
 
     @GetMapping("api/user-activities")
-    public SimpleResponseDTO getUserActivities() {
-        return SimpleResponseDTO.builder().success(true).message("User activities retrieved successfully").build();
+    public Set<ActivityDTO> getUserActivities() {
+        try{
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            boolean loggedIn = principal != null && principal instanceof User;
+            if (loggedIn) {
+                System.out.println("User is logged in");
+                User user = (User) principal;
+                io.muzoo.ssc.activityportal.backend.User u = userRepository.findFirstByUsername(user.getUsername());
+                Set<Activity> activities = u.getActivities();
+                return activities.stream().map(this::mapToDTO).collect(Collectors.toSet());
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 
