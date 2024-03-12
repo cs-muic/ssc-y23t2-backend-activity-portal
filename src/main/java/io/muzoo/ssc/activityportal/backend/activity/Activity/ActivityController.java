@@ -23,6 +23,7 @@ public class ActivityController {
     private UserRepository userRepository;
 
 
+
     /**
      * @param activity Activity object to be created
      * @return SimpleResponseDTO with success/fail and message
@@ -37,6 +38,11 @@ public class ActivityController {
         } catch (Exception e) {
             return SimpleResponseDTO.builder().success(false).message("Failed to create activity: " + e.getMessage()).build();
         }
+    }
+
+    @GetMapping("api/user-activities")
+    public SimpleResponseDTO getUserActivities() {
+        return SimpleResponseDTO.builder().success(true).message("User activities retrieved successfully").build();
     }
 }
 
