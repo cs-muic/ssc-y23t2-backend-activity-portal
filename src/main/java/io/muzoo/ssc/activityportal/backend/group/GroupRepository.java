@@ -11,8 +11,8 @@ import java.util.List;
 public interface GroupRepository extends JpaRepository<Group, Long> {
     final String queryGetAllGroups = "SELECT * FROM Group";
 
-    @Query(value = queryGetAllGroups, nativeQuery = true)
-    List<Group> fetchAllGroups();
+    // @Query(value = queryGetAllGroups, nativeQuery = true)
+    // List<Group> fetchAllGroups();
 
     // Group findGroupByID(long groupID);
     // @Query(value = "INSERT INTO Group ()", nativeQuery = true)
