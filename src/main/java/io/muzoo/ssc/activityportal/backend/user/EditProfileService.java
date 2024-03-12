@@ -23,6 +23,7 @@ public class EditProfileService {
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             User currentUser = userRepository.findFirstByUsername(((UserDetails) principal).getUsername());
             currentUser.setDisplayName(user.getDisplayName());
+            currentUser.setBio(user.getBio());
             userRepository.save(currentUser);
             return true;
         } catch (Exception e) {
