@@ -17,4 +17,9 @@ public class GroupSetupController {
         return groupSetupService.createGroup(group);
     }
 
+    @PostMapping("/api/group-edit")
+    public SimpleResponseDTO groupEdit(@RequestBody Group group){
+        return groupSetupService.editGroup(group);
+    }
+
 }
