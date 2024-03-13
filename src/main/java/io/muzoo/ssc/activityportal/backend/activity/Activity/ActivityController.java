@@ -4,10 +4,7 @@ import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
 import io.muzoo.ssc.activityportal.backend.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.userdetails.User;
 
 import java.util.List;
@@ -55,20 +52,35 @@ public class ActivityController {
 
     @GetMapping("api/user-activities")
     public Set<ActivityDTO> getUserActivities() {
-        try{
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        boolean loggedIn = principal != null && principal instanceof User;
+        if (loggedIn) {
+            User user = (User) principal;
+            io.muzoo.ssc.activityportal.backend.User u = userRepository.findFirstByUsername(user.getUsername());
+            return u.getActivities().stream().map(this::mapToDTO).collect(Collectors.toSet());
+        } else {
+            return null;
+        }
+    }
+    @PostMapping("api/unjoin-activity/{activityId}")
+    public SimpleResponseDTO unjoinActivity(@PathVariable long activityId) {
+        try {
+            // Check if user is authenticated
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             boolean loggedIn = principal != null && principal instanceof User;
             if (loggedIn) {
-                System.out.println("User is logged in");
                 User user = (User) principal;
                 io.muzoo.ssc.activityportal.backend.User u = userRepository.findFirstByUsername(user.getUsername());
-                Set<Activity> activities = u.getActivities();
-                return activities.stream().map(this::mapToDTO).collect(Collectors.toSet());
+                Activity activity = activityRepository.findFirstById(activityId);
+                u.getActivities().remove(activity);
+                userRepository.save(u);
+                return SimpleResponseDTO.builder().success(true).message("Activity unjoined successfully").build();
             } else {
-                return null;
+                return SimpleResponseDTO.builder().success(false).message("Failed to unjoin activity").build();
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return SimpleResponseDTO.builder().success(false).message("Failed to unjoin activity: " + e.getMessage()).build();
         }
     }
 }

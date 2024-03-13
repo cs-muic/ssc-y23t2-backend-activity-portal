@@ -1,9 +1,9 @@
 package io.muzoo.ssc.activityportal.backend.activity.Activity;
 
 import io.muzoo.ssc.activityportal.backend.User;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -29,6 +29,7 @@ public class Activity {
     private boolean auto_delete_overtime;
     @Column(name = "description")
     private String description;
-    @ManyToMany(mappedBy = "activities")
+
+    @ManyToMany(mappedBy = "activities", fetch = FetchType.LAZY)
     private Set<User> users;
 }
