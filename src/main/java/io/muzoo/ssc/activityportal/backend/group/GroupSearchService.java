@@ -13,4 +13,13 @@ public class GroupSearchService {
     public List<Group> fetchAllGroups(){
         return groupRepository.findAll();
     }
+
+    public Group fetchGroupByID(long groupID){
+        try {
+            return groupRepository.findGroupByID(groupID);
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
 }
