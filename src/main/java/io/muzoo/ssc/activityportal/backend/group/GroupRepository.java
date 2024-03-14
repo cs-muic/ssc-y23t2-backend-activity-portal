@@ -5,17 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface GroupRepository extends JpaRepository<Group, Long> {
-    final String queryGetAllGroups = "SELECT * FROM Group";
+    final String queryGetAllGroups = "SELECT * FROM tbl_group WHERE id=%:groupID% LIMIT 1";
+    
+    @Query(value = queryGetAllGroups,nativeQuery=true)
+    Group findGroupByID(long groupID);
 
-    // @Query(value = queryGetAllGroups, nativeQuery = true)
-    // List<Group> fetchAllGroups();
-
-    // Group findGroupByID(long groupID);
-    // @Query(value = "INSERT INTO Group ()", nativeQuery = true)
-    // Group createGroup(String name, int maxMember, long ownerID, boolean isPrivate, String publicDescription);
-//    void createGroup(String name, int maxMember, long ownerID, boolean isPrivate, String publicDescription, String privateDescription);
 }

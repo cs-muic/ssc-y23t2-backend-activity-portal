@@ -25,6 +25,8 @@ public class User {
     private String role;
 
     private String displayName;
+  
+    private String bio;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
@@ -34,3 +36,5 @@ public class User {
     )
     private Set<Activity> activities;
 }
+
+

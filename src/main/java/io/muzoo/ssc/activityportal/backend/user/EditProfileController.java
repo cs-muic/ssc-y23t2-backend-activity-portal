@@ -1,5 +1,6 @@
 package io.muzoo.ssc.activityportal.backend.user;
 
+
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
 import io.muzoo.ssc.activityportal.backend.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,23 +9,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class CreateAccountController {
+public class EditProfileController {
 
     @Autowired
-    private CreateAccountService createAccountService;
+    private EditProfileService editProfileService;
 
-
-    @PostMapping("/api/create-account")
-    public SimpleResponseDTO signup(@RequestBody User user) {
-        if (createAccountService.createAccount(user)) {
+    @PostMapping("/api/edit-profile")
+    public SimpleResponseDTO editProfile(@RequestBody User user) {
+        if (editProfileService.editProfile(user)) {
             return SimpleResponseDTO.builder()
                     .success(true)
-                    .message("Account created successfully")
+                    .message("Profile edited successfully")
                     .build();
         } else {
             return SimpleResponseDTO.builder()
                     .success(false)
-                    .message("Failed to create account")
+                    .message("Failed to edit profile")
                     .build();
         }
     }

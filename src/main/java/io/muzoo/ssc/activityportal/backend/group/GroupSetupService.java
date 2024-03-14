@@ -25,20 +25,5 @@ public class GroupSetupService{
             .message("unable to create group!")
             .build();
         }
-            
     }
-
-//    public void createGroup(String name, int maxMember, long ownerID, boolean isPrivate, String publicDescription){
-//        io.muzoo.ssc.activityportal.backend.group.Group group = groupRepository.createGroup(username);
-//        if (u != null) {
-//            return User.withUsername(u.getUsername())
-//                    .password(u.getPassword())
-//                    .roles(u.getRole())
-//                    .build();
-//        } else {
-//            throw new UsernameNotFoundException("Invalid username or password");
-//        }
-//    }
-//
-//    }
 }

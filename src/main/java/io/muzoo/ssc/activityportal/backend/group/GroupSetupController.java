@@ -14,9 +14,6 @@ public class GroupSetupController {
 
     @PostMapping("/api/group-create")
     public SimpleResponseDTO groupCreate(@RequestBody Group group){
-        // DEBUG
-        System.out.printf("Group Name: %s,\nGroup Owner ID: %d,\nGroup Description: %s,\nGroup Max member: %d,\nisPrivate: %b\n",group.getGroupName(),group.getOwnerID(),group.getPublicDescription(),group.getMaxMember(),group.getIsPrivate());
-
         return groupSetupService.createGroup(group);
     }
 
