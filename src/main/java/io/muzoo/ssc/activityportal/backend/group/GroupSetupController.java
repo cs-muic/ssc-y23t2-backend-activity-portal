@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
 
-
 /**
  * TODO: Use a DTO for group instead of passing plain group over.
  */

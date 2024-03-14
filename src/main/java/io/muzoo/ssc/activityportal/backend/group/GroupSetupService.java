@@ -84,6 +84,8 @@ public class GroupSetupService {
     public SimpleResponseDTO deleteGroup(long groupID) {
         try {
             // TODO: Temp <Maybe this will be safer than using store?>  
+            // This snippet has been used throughout multiple files, get a service to do it instead?
+            
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             long currentUserID = userRepository.findFirstByUsername(((UserDetails) principal).getUsername()).getId();
 
