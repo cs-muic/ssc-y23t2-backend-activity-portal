@@ -1,8 +1,11 @@
 package io.muzoo.ssc.activityportal.backend;
 
+import io.muzoo.ssc.activityportal.backend.activity.Activity.Activity;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import jakarta.persistence.*;
+
+import java.util.Set;
 
 @Entity
 @Getter
@@ -22,6 +25,16 @@ public class User {
     private String role;
 
     private String displayName;
-
+  
     private String bio;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "tbl_user_activity",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id")
+    )
+    private Set<Activity> activities;
 }
+
+
