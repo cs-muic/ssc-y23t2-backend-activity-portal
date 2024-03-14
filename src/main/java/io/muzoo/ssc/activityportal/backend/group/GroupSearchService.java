@@ -5,6 +5,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * TODO: 
+ *  - Use a DTO for group to recieve data.
+ */
+
 @Service
 public class GroupSearchService {
     @Autowired
@@ -16,7 +21,7 @@ public class GroupSearchService {
 
     public Group fetchGroupByID(long groupID){
         try {
-            return groupRepository.findGroupByID(groupID);
+            return groupRepository.findFirstById(groupID);
         } catch (Exception e){
             System.out.println(e.getMessage());
             return null;
