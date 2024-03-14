@@ -8,8 +8,8 @@ import lombok.Setter;
 
 import java.util.Set;
 
-// import com.fasterxml.jackson.annotation.JsonBackReference;
-// import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Getter
@@ -40,7 +40,7 @@ public class User {
     )
     private Set<Activity> activities;
 
-//     @JsonBackReference
+    @JsonBackReference
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "tbl_user_group",

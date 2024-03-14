@@ -16,6 +16,6 @@ public class MemberController {
     @PostMapping("/api/group-join/{groupID}")
     public SimpleResponseDTO joinGroup(@PathVariable long groupID){
         //TODO: uncomment this when group-join works without ruining everything 
-        return null; // memberService.joinGroup(groupID); 
+        return memberService.joinGroup(groupID); 
     }
 }
