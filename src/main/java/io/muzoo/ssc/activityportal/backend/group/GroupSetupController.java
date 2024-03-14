@@ -22,4 +22,9 @@ public class GroupSetupController {
         return groupSetupService.editGroup(group);
     }
 
+    @PostMapping("/api/group-delete")
+    public SimpleResponseDTO groupDelete(@RequestBody Group group){
+        return null; // TMP
+    }
+
 }

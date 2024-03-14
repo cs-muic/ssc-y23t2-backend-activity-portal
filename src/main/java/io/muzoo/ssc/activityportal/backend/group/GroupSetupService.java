@@ -14,6 +14,7 @@ public class GroupSetupService {
     private GroupRepository groupRepository;
     @Autowired
     private GroupSearchService groupSearchService;
+    
     // TODO: TEMP <Maybe we can use the authentication service 
     // from elsewhere instead of doing it on repository> 
     // <is it actually necessary??>
@@ -52,6 +53,8 @@ public class GroupSetupService {
             // TODO: Temp <Maybe this will be safer than using store?>  
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             long currentUserID = userRepository.findFirstByUsername(((UserDetails) principal).getUsername()).getId();
+
+            // Check if the current user is the owner of the group
             if(groupSearchService.fetchGroupByID(group.getId()).getOwnerID() != currentUserID){
                 return SimpleResponseDTO.builder()
                 .success(false)
