@@ -7,6 +7,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
 
+
+/**
+ * TODO: Use a DTO for group instead of passing plain group over.
+ */
+
 @RestController
 public class GroupSetupController {
     @Autowired
@@ -24,7 +29,9 @@ public class GroupSetupController {
 
     @PostMapping("/api/group-delete")
     public SimpleResponseDTO groupDelete(@RequestBody Group group){
-        return null; // TMP
+        // DEBUG
+        System.out.println(group.getId());
+        return groupSetupService.deleteGroup(group.getId()); // TMP
     }
 
 }
