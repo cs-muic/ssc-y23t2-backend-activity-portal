@@ -1,0 +1,21 @@
+{
+    "files.watcherExclude": {
+        "**/target": true
+    },
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 1000,
+            "server": "localhost",
+            "port": 13306,
+            "driver": "MariaDB",
+            "name": "ssc-webapp-mariaDB",
+            "username": "root",
+            "password": "GoodPass",
+            "database": "Activity_Portal"
+        }
+    ]
+}
