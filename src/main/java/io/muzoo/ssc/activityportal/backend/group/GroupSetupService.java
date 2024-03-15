@@ -60,12 +60,14 @@ public class GroupSetupService {
             long currentUserID = userRepository.findFirstByUsername(((UserDetails) principal).getUsername()).getId();
 
             // Check if the current user is the owner of the group
-            if(groupSearchService.fetchGroupByID(group.getId()).getOwnerID() != currentUserID){
+            Group currentGroup = groupSearchService.fetchGroupByID(group.getId());
+            if(currentGroup.getOwnerID() != currentUserID){
                 return SimpleResponseDTO.builder()
                 .success(false)
                 .message("Failed to authenticate!")
                 .build();
             }
+            group.setMaxMember(currentGroup.getMaxMember());
             groupRepository.save(group);
             return SimpleResponseDTO.builder()
                     .success(true)
