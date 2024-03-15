@@ -4,6 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import io.muzoo.ssc.activityportal.backend.User;
+
 @Entity
 @Getter
 @Setter
@@ -26,4 +32,8 @@ public class Group {
     private String publicDescription;
     @Column(name="private_description")
     private String privateDescription;
+    
+    // @JsonManagedReference
+    @ManyToMany(mappedBy = "groups", fetch= FetchType.LAZY)
+    private Set<User> users;
 }

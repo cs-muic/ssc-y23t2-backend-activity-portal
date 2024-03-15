@@ -60,12 +60,14 @@ public class GroupSetupService {
             long currentUserID = userRepository.findFirstByUsername(((UserDetails) principal).getUsername()).getId();
 
             // Check if the current user is the owner of the group
-            if(groupSearchService.fetchGroupByID(group.getId()).getOwnerID() != currentUserID){
+            Group currentGroup = groupSearchService.fetchGroupByID(group.getId());
+            if(currentGroup.getOwnerID() != currentUserID){
                 return SimpleResponseDTO.builder()
                 .success(false)
                 .message("Failed to authenticate!")
                 .build();
             }
+            group.setMaxMember(currentGroup.getMaxMember());
             groupRepository.save(group);
             return SimpleResponseDTO.builder()
                     .success(true)
@@ -84,6 +86,8 @@ public class GroupSetupService {
     public SimpleResponseDTO deleteGroup(long groupID) {
         try {
             // TODO: Temp <Maybe this will be safer than using store?>  
+            // This snippet has been used throughout multiple files, get a service to do it instead?
+            
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             long currentUserID = userRepository.findFirstByUsername(((UserDetails) principal).getUsername()).getId();
 
