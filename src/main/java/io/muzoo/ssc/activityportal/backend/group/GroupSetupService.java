@@ -18,7 +18,6 @@ public class GroupSetupService {
     private GroupRepository groupRepository;
     @Autowired
     private GroupSearchService groupSearchService;
-
     @Autowired
     private WhoamiService whoamiService;
 
@@ -27,20 +26,13 @@ public class GroupSetupService {
      * @param group
      * @return 
      */
-    public SimpleResponseDTO createGroup(Group group) {
+    public boolean createGroup(Group group) {
         try {
             groupRepository.save(group);
-            return SimpleResponseDTO.builder()
-                    .success(true)
-                    .message("group created successfully!")
-                    .build();
-
+            return true;
         } catch (Exception e) {
             System.out.println(e.getMessage()); // DEBUG
-            return SimpleResponseDTO.builder()
-                    .success(false)
-                    .message("unable to create group!")
-                    .build();
+            return false;
         }
     }
 
@@ -49,72 +41,32 @@ public class GroupSetupService {
      * @param group
      * @return
      */
-    public SimpleResponseDTO editGroup(Group group) {
+    public boolean editGroup(Group group, long currentUserID) {
         try {
-            User u = whoamiService.getCurrentUser();
-            if(u == null) {
-                return SimpleResponseDTO.builder()
-                        .success(false)
-                        .message("User is not logged in")
-                        .build();
-            }
-            long currentUserID = u.getId();
 
-            // Check if the current user is the owner of the group
             Group currentGroup = groupSearchService.fetchGroupByID(group.getId());
             if(currentGroup.getOwnerID() != currentUserID){
-                return SimpleResponseDTO.builder()
-                .success(false)
-                .message("Failed to authenticate!")
-                .build();
+                return false;
             }
             group.setMaxMember(currentGroup.getMaxMember());
             groupRepository.save(group);
-            return SimpleResponseDTO.builder()
-                    .success(true)
-                    .message("Group has been edited successfully!")
-                    .build();
+            return true;
 
         } catch (Exception e) {
             System.out.println(e.getMessage()); // DEBUG
-            return SimpleResponseDTO.builder()
-                    .success(false)
-                    .message("unable to edit group!")
-                    .build();
+            return false;
         }
     }
 
-    public SimpleResponseDTO deleteGroup(long groupID) {
+    public boolean deleteGroup(long groupID, long currentUserID) {
         try {
-            // TODO: Temp <Maybe this will be safer than using store?>  
-            // This snippet has been used throughout multiple files, get a service to do it instead?
-            User u = whoamiService.getCurrentUser();
-            if(u == null) {
-                return SimpleResponseDTO.builder()
-                        .success(false)
-                        .message("User is not logged in")
-                        .build();
-            }
-            long currentUserID = u.getId();
-
-            // Check if the current user is the owner of the group
             if(groupSearchService.fetchGroupByID(groupID).getOwnerID() != currentUserID){
-                return SimpleResponseDTO.builder()
-                .success(false)
-                .message("Failed to authenticate!")
-                .build();
+                return false;
             }
             groupRepository.deleteById(groupID);
-            return SimpleResponseDTO.builder()
-                    .success(true)
-                    .message("Group has been deleted!")
-                    .build();
+            return true;
         } catch (Exception e) {
-            System.out.println(e.getMessage()); // DEBUG
-            return SimpleResponseDTO.builder()
-                    .success(false)
-                    .message("unable to delete group!")
-                    .build();
+            return false;
         }
     }
 }

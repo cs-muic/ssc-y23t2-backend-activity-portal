@@ -1,5 +1,6 @@
 package io.muzoo.ssc.activityportal.backend.group;
 
+import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,18 +15,37 @@ public class GroupSearchController {
     private GroupSearchService groupSearchService;
 
     @GetMapping("/api/group-search/fetch-all-groups")
-    public List<Group> fetchAllGroups(){ // How about returning a new class that have group inside
+    public GroupListDTO fetchAllGroups(){ // How about returning a new class that have group inside
         try {
-            return groupSearchService.fetchAllGroups();
+            List<Group> groupList = groupSearchService.fetchAllGroups();
+            return GroupListDTO.builder()
+                    .group(groupList)
+                    .message("Found groups")
+                    .success(true)
+                    .build();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return null;
+            return GroupListDTO.builder()
+                    .message("Groups not found")
+                    .success(false)
+                    .build();
         }
     }
 
     @GetMapping("/api/group-search/{groupID}")
-    public Group fetchGroupByID(@PathVariable("groupID") long groupID) {
-        return groupSearchService.fetchGroupByID(groupID);
+    public GroupDTO fetchGroupByID(@PathVariable("groupID") long groupID) {
+        Group group = groupSearchService.fetchGroupByID(groupID);
+        if(group != null){
+            return GroupDTO.builder()
+                    .success(true)
+                    .group(group)
+                    .message("Found group")
+                    .build();
+        } else {
+            return GroupDTO.builder()
+                    .success(false)
+                    .message("Group not found")
+                    .build();
+        }
     }
 }
     

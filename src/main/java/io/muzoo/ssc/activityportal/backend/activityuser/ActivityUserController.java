@@ -1,7 +1,7 @@
 package io.muzoo.ssc.activityportal.backend.activityuser;
 
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
-import io.muzoo.ssc.activityportal.backend.UserRepository;
+import io.muzoo.ssc.activityportal.backend.user.UserRepository;
 import io.muzoo.ssc.activityportal.backend.activity.Activity;
 import io.muzoo.ssc.activityportal.backend.activity.ActivityDTO;
 import io.muzoo.ssc.activityportal.backend.activity.ActivityRepository;

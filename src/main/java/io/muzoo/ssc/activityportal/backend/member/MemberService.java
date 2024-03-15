@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
-import io.muzoo.ssc.activityportal.backend.UserRepository;
+import io.muzoo.ssc.activityportal.backend.user.UserRepository;
 
 @Service
 public class MemberService {

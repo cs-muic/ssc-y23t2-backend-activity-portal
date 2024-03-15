@@ -12,7 +12,19 @@ public class ProfileViewController {
     private ProfileViewService profileViewService;
 
     @GetMapping("/api/user/{username}")
-    public User viewProfile(@PathVariable("username") String username) {
-        return profileViewService.viewProfile(username);
+    public UserDTO viewProfile(@PathVariable("username") String username) {
+        User u = profileViewService.viewProfile(username);
+        if(u != null){
+            return UserDTO.builder()
+                    .success(true)
+                    .user(u)
+                    .message("User not found")
+                    .build();
+        } else {
+            return UserDTO.builder()
+                    .success(false)
+                    .message("User not found")
+                    .build();
+        }
     }
 }

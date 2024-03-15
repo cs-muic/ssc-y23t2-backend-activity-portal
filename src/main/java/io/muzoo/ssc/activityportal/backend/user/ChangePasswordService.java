@@ -1,6 +1,5 @@
 package io.muzoo.ssc.activityportal.backend.user;
 
-import io.muzoo.ssc.activityportal.backend.UserRepository;
 import io.muzoo.ssc.activityportal.backend.whoami.WhoamiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

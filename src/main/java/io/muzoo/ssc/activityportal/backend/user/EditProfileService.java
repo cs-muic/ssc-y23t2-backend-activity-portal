@@ -1,6 +1,6 @@
 package io.muzoo.ssc.activityportal.backend.user;
 
-import io.muzoo.ssc.activityportal.backend.UserRepository;
+import io.muzoo.ssc.activityportal.backend.whoami.WhoamiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,6 +11,8 @@ public class EditProfileService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private WhoamiService whoamiService;
 
     /**
      * Edit the profile of the user
@@ -19,8 +21,10 @@ public class EditProfileService {
      */
     public boolean editProfile(User user) {
         try {
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            User currentUser = userRepository.findFirstByUsername(((UserDetails) principal).getUsername());
+            User currentUser = whoamiService.getCurrentUser();
+            if(currentUser == null) {
+                return false;
+            }
             currentUser.setDisplayName(user.getDisplayName());
             currentUser.setBio(user.getBio());
             userRepository.save(currentUser);

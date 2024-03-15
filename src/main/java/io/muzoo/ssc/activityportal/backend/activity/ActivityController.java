@@ -1,15 +1,9 @@
 package io.muzoo.ssc.activityportal.backend.activity;
 
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
-import io.muzoo.ssc.activityportal.backend.UserRepository;
+import io.muzoo.ssc.activityportal.backend.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.userdetails.User;
-
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 public class ActivityController {

@@ -1,4 +1,4 @@
-package io.muzoo.ssc.activityportal.backend;
+package io.muzoo.ssc.activityportal.backend.user;
 
 import io.muzoo.ssc.activityportal.backend.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
