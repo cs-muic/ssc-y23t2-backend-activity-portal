@@ -1,8 +1,10 @@
-package io.muzoo.ssc.activityportal.backend.group;
+package io.muzoo.ssc.activityportal.backend.member;
 
+import io.muzoo.ssc.activityportal.backend.user.User;
+import io.muzoo.ssc.activityportal.backend.group.Group;
+import io.muzoo.ssc.activityportal.backend.group.GroupSearchService;
+import io.muzoo.ssc.activityportal.backend.whoami.WhoamiService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
@@ -19,6 +21,8 @@ public class MemberService {
     @Autowired
     private GroupSearchService groupSearchService;
 
+    @Autowired
+    private WhoamiService whoamiService;
 
     // TODO: increment user count to group when added to group
     /**
@@ -36,10 +40,14 @@ public class MemberService {
                         .message("Group does not exist.")
                         .build();
             }
-            // TODO: This is the reused code snippet, find a way to fix it.
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            User user = (User) principal;
-            io.muzoo.ssc.activityportal.backend.User u = userRepository.findFirstByUsername(user.getUsername());
+
+            User u = whoamiService.getCurrentUser();
+            if(u == null) {
+                return SimpleResponseDTO.builder()
+                        .success(false)
+                        .message("User is not logged in")
+                        .build();
+            }
 
             u.getGroups().add(currentGroup);
             userRepository.save(u);

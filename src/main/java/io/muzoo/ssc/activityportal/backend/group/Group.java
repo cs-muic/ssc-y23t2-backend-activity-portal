@@ -6,9 +6,7 @@ import lombok.Setter;
 
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
-import io.muzoo.ssc.activityportal.backend.User;
+import io.muzoo.ssc.activityportal.backend.user.User;
 
 @Entity
 @Getter

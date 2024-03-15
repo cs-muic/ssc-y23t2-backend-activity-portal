@@ -1,6 +1,6 @@
-package io.muzoo.ssc.activityportal.backend.activity.Activity;
+package io.muzoo.ssc.activityportal.backend.activity;
 
-import io.muzoo.ssc.activityportal.backend.activity.Activity.Activity;
+import io.muzoo.ssc.activityportal.backend.activity.Activity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

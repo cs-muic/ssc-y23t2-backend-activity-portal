@@ -1,9 +1,7 @@
 package io.muzoo.ssc.activityportal.backend.whoami;
 
-import io.muzoo.ssc.activityportal.backend.User;
-import io.muzoo.ssc.activityportal.backend.UserRepository;
+import io.muzoo.ssc.activityportal.backend.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class WhoamiController {
     @Autowired
-    private UserRepository userRepository;
+    private WhoamiService whoamiService;
 
     /**
      * Get the info of the logged in user
@@ -22,11 +20,9 @@ public class WhoamiController {
     @GetMapping("/api/whoami")
     public WhoamiDTO whoami(){
         try {
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (principal != null && principal instanceof org.springframework.security.core.userdetails.User){
+            User u = whoamiService.getCurrentUser();
+            if (u != null){
                 //is logged in
-                org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) principal;
-                User u = userRepository.findFirstByUsername(user.getUsername());
                 return WhoamiDTO.builder()
                         .isLoggedIn(true)
                         .displayName(u.getDisplayName())

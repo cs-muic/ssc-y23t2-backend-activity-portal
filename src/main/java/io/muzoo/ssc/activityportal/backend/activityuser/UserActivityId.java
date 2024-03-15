@@ -1,4 +1,4 @@
-package io.muzoo.ssc.activityportal.backend.activity.Activity;
+package io.muzoo.ssc.activityportal.backend.activityuser;
 
 import java.io.Serializable;
 

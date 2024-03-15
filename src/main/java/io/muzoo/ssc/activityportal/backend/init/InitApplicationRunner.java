@@ -1,6 +1,6 @@
 package io.muzoo.ssc.activityportal.backend.init;
 
-import io.muzoo.ssc.activityportal.backend.User;
+import io.muzoo.ssc.activityportal.backend.user.User;
 import io.muzoo.ssc.activityportal.backend.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;

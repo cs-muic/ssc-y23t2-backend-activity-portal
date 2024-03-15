@@ -24,7 +24,7 @@ public class OurUserDetailsService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        io.muzoo.ssc.activityportal.backend.User u = userRepository.findFirstByUsername(username);
+        io.muzoo.ssc.activityportal.backend.user.User u = userRepository.findFirstByUsername(username);
         if (u != null) {
             return User.withUsername(u.getUsername())
 				.password(u.getPassword())

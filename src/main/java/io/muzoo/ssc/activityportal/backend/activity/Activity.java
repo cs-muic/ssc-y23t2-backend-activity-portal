@@ -1,6 +1,6 @@
-package io.muzoo.ssc.activityportal.backend.activity.Activity;
+package io.muzoo.ssc.activityportal.backend.activity;
 
-import io.muzoo.ssc.activityportal.backend.User;
+import io.muzoo.ssc.activityportal.backend.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

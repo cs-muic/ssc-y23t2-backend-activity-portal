@@ -1,11 +1,10 @@
 package io.muzoo.ssc.activityportal.backend.group;
 
+import io.muzoo.ssc.activityportal.backend.user.User;
+import io.muzoo.ssc.activityportal.backend.whoami.WhoamiService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import io.muzoo.ssc.activityportal.backend.UserRepository;
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
 
 /**
@@ -20,11 +19,8 @@ public class GroupSetupService {
     @Autowired
     private GroupSearchService groupSearchService;
 
-    // TODO: TEMP <Maybe we can use the authentication service 
-    // from elsewhere instead of doing it on repository> 
-    // <is it actually necessary??>
     @Autowired
-    private UserRepository userRepository;
+    private WhoamiService whoamiService;
 
     /**
      * Function to create group.
@@ -55,9 +51,14 @@ public class GroupSetupService {
      */
     public SimpleResponseDTO editGroup(Group group) {
         try {
-            // TODO: Temp <Maybe this will be safer than using store?>  
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            long currentUserID = userRepository.findFirstByUsername(((UserDetails) principal).getUsername()).getId();
+            User u = whoamiService.getCurrentUser();
+            if(u == null) {
+                return SimpleResponseDTO.builder()
+                        .success(false)
+                        .message("User is not logged in")
+                        .build();
+            }
+            long currentUserID = u.getId();
 
             // Check if the current user is the owner of the group
             Group currentGroup = groupSearchService.fetchGroupByID(group.getId());
@@ -87,9 +88,14 @@ public class GroupSetupService {
         try {
             // TODO: Temp <Maybe this will be safer than using store?>  
             // This snippet has been used throughout multiple files, get a service to do it instead?
-            
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            long currentUserID = userRepository.findFirstByUsername(((UserDetails) principal).getUsername()).getId();
+            User u = whoamiService.getCurrentUser();
+            if(u == null) {
+                return SimpleResponseDTO.builder()
+                        .success(false)
+                        .message("User is not logged in")
+                        .build();
+            }
+            long currentUserID = u.getId();
 
             // Check if the current user is the owner of the group
             if(groupSearchService.fetchGroupByID(groupID).getOwnerID() != currentUserID){

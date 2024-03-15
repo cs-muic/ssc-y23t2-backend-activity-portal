@@ -1,10 +1,8 @@
 package io.muzoo.ssc.activityportal.backend.user;
 
-import io.muzoo.ssc.activityportal.backend.User;
 import io.muzoo.ssc.activityportal.backend.UserRepository;
+import io.muzoo.ssc.activityportal.backend.whoami.WhoamiService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +14,8 @@ public class ChangePasswordService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private WhoamiService whoamiService;
 
     /**
      * Change the password of the user
@@ -24,8 +24,10 @@ public class ChangePasswordService {
      */
     public boolean changePassword(User userPassword) {
         try {
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            User currentUser = userRepository.findFirstByUsername(((UserDetails) principal).getUsername());
+            User currentUser = whoamiService.getCurrentUser();
+            if(currentUser == null) {
+                return false;
+            }
             currentUser.setPassword(passwordEncoder.encode(userPassword.getPassword()));
             userRepository.save(currentUser);
             return true;

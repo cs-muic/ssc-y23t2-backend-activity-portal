@@ -1,8 +1,8 @@
-package io.muzoo.ssc.activityportal.backend.activity.Activity;
+package io.muzoo.ssc.activityportal.backend.activity;
 
-import io.muzoo.ssc.activityportal.backend.activity.Activity.Activity;
-import io.muzoo.ssc.activityportal.backend.activity.Activity.ActivityRepository;
-import io.muzoo.ssc.activityportal.backend.activity.Activity.ActivityService;
+import io.muzoo.ssc.activityportal.backend.activity.Activity;
+import io.muzoo.ssc.activityportal.backend.activity.ActivityRepository;
+import io.muzoo.ssc.activityportal.backend.activity.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;

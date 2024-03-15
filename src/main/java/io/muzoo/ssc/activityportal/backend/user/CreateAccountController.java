@@ -1,7 +1,6 @@
 package io.muzoo.ssc.activityportal.backend.user;
 
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
-import io.muzoo.ssc.activityportal.backend.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
