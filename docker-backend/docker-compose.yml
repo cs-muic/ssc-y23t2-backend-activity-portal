@@ -1,0 +1,20 @@
+services:
+  backend:
+    image: 'activity-portal-backend'
+    build:
+      context: .
+    container_name: backend
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://ssc-webapp-mariadb:3306/Activity_Portal
+      - SPRING_DATASOURCE_USERNAME=ssc
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MariaDBDialect
+    ports:
+      - "80:8081"
+    networks:
+      - webapp-network
+
+networks:
+  webapp-network:
+    external: true
