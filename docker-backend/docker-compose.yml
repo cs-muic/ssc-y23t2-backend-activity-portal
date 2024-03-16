@@ -11,7 +11,7 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MariaDBDialect
     ports:
-      - "80:8081"
+      - "8081:8081"
     networks:
       - webapp-network
 
