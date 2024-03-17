@@ -27,6 +27,7 @@ public class ActivityGroupController {
     @Autowired
     private ActivityMapper activityMapper;
 
+
     /**
      * Gets the list of activities that a group has.
      *
