@@ -1,6 +1,6 @@
 package io.muzoo.ssc.activityportal.backend.activity;
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
-import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
