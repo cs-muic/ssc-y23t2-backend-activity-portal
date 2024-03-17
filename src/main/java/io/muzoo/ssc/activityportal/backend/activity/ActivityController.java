@@ -1,7 +1,6 @@
 package io.muzoo.ssc.activityportal.backend.activity;
 
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
-import io.muzoo.ssc.activityportal.backend.group.Group;
 import io.muzoo.ssc.activityportal.backend.group.GroupRepository;
 import io.muzoo.ssc.activityportal.backend.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +35,16 @@ public class ActivityController {
     @PutMapping("api/{groupId}/activity-edit/{activityId}")
     public SimpleResponseDTO editActivity(@RequestBody Activity activityDetail, @PathVariable long groupId, @PathVariable long activityId) {
         return activityService.editActivityDetails(activityDetail, groupId, activityId);
+    }
+
+    @PostMapping("api/{groupId}/activity-edit")
+    public SimpleResponseDTO editActivity(@RequestBody Activity activity, @PathVariable long groupId) {
+
+        return groupRepository.findById(groupId).map(group -> {
+            activity.setGroup(group);
+            activityRepository.save(activity);
+            return SimpleResponseDTO.builder().success(true).message("Activity edited").build();
+        }).orElse(SimpleResponseDTO.builder().success(false).message("Group not found").build());
     }
 }
 

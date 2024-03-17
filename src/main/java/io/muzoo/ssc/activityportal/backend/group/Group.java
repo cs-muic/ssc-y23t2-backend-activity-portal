@@ -18,9 +18,9 @@ public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(name="creation_time")
+    @Column(name = "creation_time")
     private LocalDateTime creationTime;
-    @Column(name="group_name")
+    @Column(name = "group_name")
     private String groupName;
     @Column(name = "max_member")
     private int maxMember;
@@ -36,8 +36,7 @@ public class Group {
     private String privateDescription;
 
     // @JsonManagedReference
-    // mappedBy ~ Not owner
-    @ManyToMany(mappedBy = "groups", fetch= FetchType.LAZY)
+    @ManyToMany(mappedBy = "groups", fetch = FetchType.LAZY)
     private List<User> users;
 
     @PreRemove
