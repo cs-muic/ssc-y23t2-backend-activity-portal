@@ -35,7 +35,7 @@ public class Activity {
     @ManyToMany(mappedBy = "activities", fetch = FetchType.LAZY)
     private Set<User> users;
 
-    // Activity will now have a foreign key called group_id.
+    // Actiity will now have a foreign key called group_id.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", nullable = false)
     @JsonManagedReference
