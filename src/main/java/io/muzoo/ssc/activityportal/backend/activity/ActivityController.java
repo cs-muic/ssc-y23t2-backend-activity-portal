@@ -1,9 +1,13 @@
 package io.muzoo.ssc.activityportal.backend.activity;
 
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
+import io.muzoo.ssc.activityportal.backend.group.GroupRepository;
 import io.muzoo.ssc.activityportal.backend.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ActivityController {
@@ -14,23 +18,30 @@ public class ActivityController {
     private ActivityService activityService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private GroupRepository groupRepository;
 
     /**
      * @param activity Activity object to be created
      * @return SimpleResponseDTO with success/fail and message
      */
-    @PostMapping("api/create-activity")
-    public SimpleResponseDTO createActivity(@RequestBody Activity activity) {
-        System.out.println(activity.getName());
-        try {
+    @PostMapping("api/{groupId}/activity-create")
+    public SimpleResponseDTO createActivity(@RequestBody Activity activity, @PathVariable long groupId) {
+        return groupRepository.findById(groupId).map(group -> {
+            activity.setGroup(group);
             activityRepository.save(activity);
-            //You should call the repo from activity-group here in the future to say that the activity belongs
-            //to that group
-            return SimpleResponseDTO.builder().success(true).message("Activity created successfully").build();
+            return SimpleResponseDTO.builder().success(true).message("Activity created").build();
+        }).orElse(SimpleResponseDTO.builder().success(false).message("Group not found").build());
+    }
 
-        } catch (Exception e) {
-            return SimpleResponseDTO.builder().success(false).message("Failed to create activity: " + e.getMessage()).build();
-        }
+    @PostMapping("api/{groupId}/activity-edit")
+    public SimpleResponseDTO editActivity(@RequestBody Activity activity, @PathVariable long groupId) {
+
+        return groupRepository.findById(groupId).map(group -> {
+            activity.setGroup(group);
+            activityRepository.save(activity);
+            return SimpleResponseDTO.builder().success(true).message("Activity edited").build();
+        }).orElse(SimpleResponseDTO.builder().success(false).message("Group not found").build());
     }
 }
 

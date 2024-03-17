@@ -1,13 +1,14 @@
 package io.muzoo.ssc.activityportal.backend.group;
 
+import io.muzoo.ssc.activityportal.backend.activity.Activity;
+import io.muzoo.ssc.activityportal.backend.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
-import io.muzoo.ssc.activityportal.backend.user.User;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -21,19 +22,19 @@ public class Group {
     private LocalDateTime creationTime;
     @Column(name="group_name")
     private String groupName;
-    @Column(name="max_member")
+    @Column(name = "max_member")
     private int maxMember;
-    @Column(name="member_count")
+    @Column(name = "member_count")
     private int memberCount;
-    @Column(name="owner_ID")
+    @Column(name = "owner_ID")
     private long ownerID;
-    @Column(name="is_private")
+    @Column(name = "is_private")
     private Boolean isPrivate;
-    @Column(name="public_description")
+    @Column(name = "public_description")
     private String publicDescription;
-    @Column(name="private_description")
+    @Column(name = "private_description")
     private String privateDescription;
-    
+
     // @JsonManagedReference
     // mappedBy ~ Not owner
     @ManyToMany(mappedBy = "groups", fetch= FetchType.LAZY)
@@ -45,4 +46,7 @@ public class Group {
             user.getGroups().remove(this);
         }
     }
+    // The parent in the relationship is the Group, and the child is the Activity, orphanRemoval means that if the parent is removed, the child will also be removed.
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<Activity> activities;
 }

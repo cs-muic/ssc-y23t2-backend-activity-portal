@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface ActivityRepository extends JpaRepository<Activity, Long> {
@@ -29,5 +30,12 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
      * @return the activity
      */
     Activity findFirstById(Long id);
+
+    /**
+     * Find the activity by the groupID
+     * @param groupId the groupID
+     * @return the list of activities
+     */
+    Set<Activity> findAllByGroupId(Long groupId);
 
 }
