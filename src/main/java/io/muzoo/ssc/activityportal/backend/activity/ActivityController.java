@@ -1,6 +1,7 @@
 package io.muzoo.ssc.activityportal.backend.activity;
 
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
+import io.muzoo.ssc.activityportal.backend.group.Group;
 import io.muzoo.ssc.activityportal.backend.group.GroupRepository;
 import io.muzoo.ssc.activityportal.backend.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,18 @@ public class ActivityController {
         return activityRepository.findById(activity_id).map(activityMapper::mapToDTO).orElse(null);
     }
 
+//    @GetMapping("api/{activityId}/activity")
+//    public ActivityDTO getActivity(@PathVariable long activityId) {
+//return activityRepository.findById(activityId).map(activity -> {
+//            return ActivityDTO.builder()
+//                    .activity(activity)
+//                    .success(true)
+//                    .message("Activity found")
+//                    .build();
+//        }).orElse(ActivityDTO.builder()
+//                .success(false)
+//                .message("Activity not found")
+//                .build());
 
     /**
      * @param activity Activity object to be created
