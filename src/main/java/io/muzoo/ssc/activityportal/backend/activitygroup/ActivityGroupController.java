@@ -2,6 +2,7 @@ package io.muzoo.ssc.activityportal.backend.activitygroup;
 
 import io.muzoo.ssc.activityportal.backend.activity.Activity;
 import io.muzoo.ssc.activityportal.backend.activity.ActivityDTO;
+import io.muzoo.ssc.activityportal.backend.activity.ActivityMapper;
 import io.muzoo.ssc.activityportal.backend.activity.ActivityRepository;
 import io.muzoo.ssc.activityportal.backend.group.GroupRepository;
 import org.slf4j.Logger;
@@ -23,6 +24,8 @@ public class ActivityGroupController {
     private GroupRepository groupRepository;
     @Autowired
     private ActivityGroupService activityGroupService;
+    @Autowired
+    private ActivityMapper activityMapper;
 
     /**
      * Gets the list of activities that a group has.
@@ -34,7 +37,7 @@ public class ActivityGroupController {
     public GroupActivityResponseDTO getUserActivities(@PathVariable long groupId) {
         System.out.println(groupId);
         GroupActivityResponseDTO response = new GroupActivityResponseDTO();
-        Set<ActivityDTO> activities = activityGroupService.getGroupActivity(groupId).stream().map(this::mapToDTO).collect(Collectors.toSet());
+        Set<ActivityDTO> activities = activityGroupService.getGroupActivity(groupId).stream().map(activityMapper::mapToDTO).collect(Collectors.toSet());
         if (activities.isEmpty()){
             response.setSuccess(false);
             response.setMessage("No activities found");
@@ -45,18 +48,5 @@ public class ActivityGroupController {
         response.setActivities(activities);
         return response;
     }
-
-    private ActivityDTO mapToDTO(Activity activity) {
-        ActivityDTO dto = new ActivityDTO();
-        dto.setId(activity.getId());
-        dto.setName(activity.getName());
-        dto.setStart_time(activity.getStart_time());
-        dto.setEnd_time(activity.getEnd_time());
-        dto.setCleanup_date(activity.getCleanup_date());
-        dto.setAuto_delete_overtime(activity.isAuto_delete_overtime());
-        dto.setDescription(activity.getDescription());
-        return dto;
-    }
-
 }
 
