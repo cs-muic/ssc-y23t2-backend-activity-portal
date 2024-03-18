@@ -33,18 +33,6 @@ public class ActivityController {
     }
 
 
-//    @GetMapping("api/{activityId}/activity")
-//    public ActivityDTO getActivity(@PathVariable long activityId) {
-//return activityRepository.findById(activityId).map(activity -> {
-//            return ActivityDTO.builder()
-//                    .activity(activity)
-//                    .success(true)
-//                    .message("Activity found")
-//                    .build();
-//        }).orElse(ActivityDTO.builder()
-//                .success(false)
-//                .message("Activity not found")
-//                .build());
 
     /**
      * @param activity Activity object to be created
