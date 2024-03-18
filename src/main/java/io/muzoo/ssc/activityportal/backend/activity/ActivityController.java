@@ -26,6 +26,7 @@ public class ActivityController {
 
     /**
      * Get the activity information by its id.
+     * 
      * @param activity_id the id of the activity.
      * @return the activity information in DTO form.
      */
@@ -33,7 +34,6 @@ public class ActivityController {
     public ActivityDTO getActivity(@PathVariable long activity_id) {
         return activityRepository.findById(activity_id).map(activityMapper::mapToDTO).orElse(null);
     }
-
 
     /**
      * @param activity Activity object to be created
@@ -50,13 +50,15 @@ public class ActivityController {
 
     /**
      * Edit the activity details.
+     * 
      * @param activityDetail the activity details to be edited.
-     * @param groupId the group id that the activity should belong to.
-     * @param activityId the activity id that is going to be edited.
+     * @param groupId        the group id that the activity should belong to.
+     * @param activityId     the activity id that is going to be edited.
      * @return SimpleResponseDTO with success/fail and message.
      */
     @PutMapping("api/{groupId}/activity-edit/{activityId}")
-    public SimpleResponseDTO editActivity(@RequestBody Activity activityDetail, @PathVariable long groupId, @PathVariable long activityId) {
+    public SimpleResponseDTO editActivity(@RequestBody Activity activityDetail, @PathVariable long groupId,
+            @PathVariable long activityId) {
         return activityService.editActivityDetails(activityDetail, groupId, activityId);
     }
 
@@ -70,5 +72,3 @@ public class ActivityController {
         }).orElse(SimpleResponseDTO.builder().success(false).message("Group not found").build());
     }
 }
-
-
