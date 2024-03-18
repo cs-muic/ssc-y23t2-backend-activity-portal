@@ -35,7 +35,6 @@ public class ActivityController {
         return activityRepository.findById(activity_id).map(activityMapper::mapToDTO).orElse(null);
     }
 
-
     /**
      * @param activity Activity object to be created
      * @return SimpleResponseDTO with success/fail and message
