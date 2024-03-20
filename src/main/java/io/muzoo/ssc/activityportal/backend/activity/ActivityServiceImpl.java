@@ -23,7 +23,6 @@ public class ActivityServiceImpl implements ActivityService {
         this.activityRepository = activityRepository;
     }
 
-
     public SimpleResponseDTO editActivityDetails(Activity activityDetail, long groupId, long activityId) {
         User u = whoamiService.getCurrentUser();
         if (u == null) {

@@ -18,6 +18,14 @@ public class ActivityController {
     private UserRepository userRepository;
     @Autowired
     private GroupRepository groupRepository;
+    @Autowired
+    private ActivityMapper activityMapper;
+
+
+    @GetMapping("api/{activity_id}/activity")
+    public ActivityDTO getActivity(@PathVariable long activity_id) {
+        return activityRepository.findById(activity_id).map(activityMapper::mapToDTO).orElse(null);
+    }
 
 
     /**
