@@ -33,7 +33,6 @@ public class ActivityController {
     }
 
 
-
     /**
      * @param activity Activity object to be created
      * @return SimpleResponseDTO with success/fail and message
