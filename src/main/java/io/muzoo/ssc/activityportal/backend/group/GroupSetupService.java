@@ -43,7 +43,7 @@ public class GroupSetupService {
      */
     public boolean editGroup(Group group, long currentUserID) {
         try {
-
+            System.out.println(group.getId() + " " + group.getOwnerID());
             Group currentGroup = groupSearchService.fetchGroupByID(group.getId());
             if(currentGroup.getOwnerID() != currentUserID){
                 return false;
