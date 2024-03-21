@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
 
+import java.time.LocalDateTime;
+
 /**
  * TODO: 
  *  - Use a DTO for group to recieve data.
@@ -45,7 +47,7 @@ public class GroupSetupService {
         try {
             System.out.println(group.getId() + " " + group.getOwnerID());
             Group currentGroup = groupSearchService.fetchGroupByID(group.getId());
-            if(currentGroup.getOwnerID() != currentUserID){
+            if(currentGroup.getOwnerID() != currentUserID && !deleteGroupByTime(currentGroup)){
                 return false;
             }
             group.setMaxMember(currentGroup.getMaxMember());
@@ -67,6 +69,38 @@ public class GroupSetupService {
             return true;
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    /**
+     * deletes a single group if overtime
+     * @param group
+     * @return true if overtime
+     */
+    public boolean deleteGroupByTime(Group group) {
+        try {
+            LocalDateTime threeDaysAgo = LocalDateTime.now().minusDays(3);
+            if (group.getCreationTime().isBefore(threeDaysAgo)) {
+                groupRepository.deleteById(group.getId());
+                return true;
+            }
+            return false;
+        } catch(Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * cleans up all the groups that are overtime
+     */
+    public void cleanupGroup() {
+        try {
+            for (Group group:
+                    groupSearchService.fetchAllGroupsByTime()) {
+                deleteGroupByTime(group);
+                System.out.println("DELETED GROUP WITH ID: " + group.getId());
+            }
+        } catch(Exception e) {
         }
     }
 }

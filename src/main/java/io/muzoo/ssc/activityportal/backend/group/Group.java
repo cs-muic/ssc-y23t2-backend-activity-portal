@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import io.muzoo.ssc.activityportal.backend.user.User;
@@ -16,6 +17,8 @@ public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column(name="creation_time")
+    private LocalDateTime creationTime;
     @Column(name="group_name")
     private String groupName;
     @Column(name="max_member")

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 public interface GroupRepository extends JpaRepository<Group, Long> {
 
     List<Group> findAll();
+    List<Group> findAllByOrderByCreationTimeAsc();
     Group findFirstById(long groupID);
     void deleteById(long groupID);
 

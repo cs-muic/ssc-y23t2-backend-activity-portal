@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * TODO: 
+ * TODO:
  *  - Use a DTO for group to recieve data.
  */
 
@@ -16,7 +16,12 @@ public class GroupSearchService {
     private GroupRepository groupRepository;
 
     public List<Group> fetchAllGroups(){
+
         return groupRepository.findAll();
+    }
+
+    public List<Group> fetchAllGroupsByTime(){
+        return groupRepository.findAllByOrderByCreationTimeAsc();
     }
 
     public Group fetchGroupByID(long groupID){
