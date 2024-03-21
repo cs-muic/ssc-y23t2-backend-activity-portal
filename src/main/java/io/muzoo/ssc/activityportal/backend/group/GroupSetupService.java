@@ -82,6 +82,7 @@ public class GroupSetupService {
             LocalDateTime threeDaysAgo = LocalDateTime.now().minusDays(3);
             if (group.getCreationTime().isBefore(threeDaysAgo)) {
                 groupRepository.deleteById(group.getId());
+                System.out.println("DELETED GROUP WITH ID: " + group.getId());
                 return true;
             }
             return false;
@@ -98,7 +99,6 @@ public class GroupSetupService {
             for (Group group:
                     groupSearchService.fetchAllGroupsByTime()) {
                 deleteGroupByTime(group);
-                System.out.println("DELETED GROUP WITH ID: " + group.getId());
             }
         } catch(Exception e) {
         }
