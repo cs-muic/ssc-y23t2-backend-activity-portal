@@ -11,13 +11,10 @@ import io.muzoo.ssc.activityportal.backend.user.UserRepository;
 
 @Service
 public class MemberService {
-    // @Autowired
-    // private GroupRepository groupRepository;
-
     @Autowired
     private UserRepository userRepository;
 
-    // TODO: increment user count to group when added to group
+    // TODO: increment user count to group when user join/leave groups
     /**
      * Method for joining group using groupID
      * 
@@ -36,7 +33,18 @@ public class MemberService {
         }
     }
 
-    public List<Group> fetchMyGroups(User u){
+    public boolean leaveGroup(User currentUser, Group currentGroup) {
+        try {
+            currentUser.getGroups().remove(currentGroup);
+            userRepository.save(currentUser);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage()); // DEBUG
+            return false;
+        }
+    }
+
+    public List<Group> fetchMyGroups(User u) {
         return u.getGroups();
     }
 }

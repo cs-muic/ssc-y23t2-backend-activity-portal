@@ -31,25 +31,29 @@ public class MemberController {
     @Autowired
     private GroupSetupService groupSetupService;
 
+    private SimpleResponseDTO validityChecking(Group currentGroup, User u){
+        if (currentGroup == null) {
+            return SimpleResponseDTO.builder()
+                    .success(false)
+                    .message("Group does not exist.")
+                    .build();
+        } else if (u == null) {
+            return SimpleResponseDTO.builder()
+                    .success(false)
+                    .message("User is not logged in")
+                    .build();
+        }
+        return null;
+    }
+
     @PostMapping("/api/group-join/{groupID}")
     public SimpleResponseDTO joinGroup(@PathVariable long groupID) {
-        // TODO: uncomment this when group-join works without ruining everything
         try {
             Group currentGroup = groupSearchService.fetchGroupByID(groupID);
-            if (currentGroup == null) {
-                return SimpleResponseDTO.builder()
-                        .success(false)
-                        .message("Group does not exist.")
-                        .build();
-            }
-
             User u = whoamiService.getCurrentUser();
-            if (u == null) {
-                return SimpleResponseDTO.builder()
-                        .success(false)
-                        .message("User is not logged in")
-                        .build();
-            }
+            SimpleResponseDTO validityCheck = validityChecking(currentGroup, u);
+            
+            if ( validityCheck!= null ) return validityCheck;
             if (memberService.joinGroup(groupID, u, currentGroup)) {
                 return SimpleResponseDTO.builder()
                         .success(true)
@@ -66,6 +70,35 @@ public class MemberController {
             return SimpleResponseDTO.builder()
                     .success(false)
                     .message("Unable to join group!")
+                    .build();
+        }
+    }
+
+    @PostMapping("/api/group-leave/{groupID}")
+    public SimpleResponseDTO leaveGroup(@PathVariable long groupID) {
+        try {
+            Group currentGroup = groupSearchService.fetchGroupByID(groupID);
+            User u = whoamiService.getCurrentUser();
+            SimpleResponseDTO validityCheck = validityChecking(currentGroup, u);
+            
+            if ( validityCheck!= null ) return validityCheck;
+
+            if (memberService.leaveGroup(u, currentGroup)) {
+                return SimpleResponseDTO.builder()
+                        .success(true)
+                        .message("Leave group successfully!")
+                        .build();
+            } else {
+                return SimpleResponseDTO.builder()
+                        .success(false)
+                        .message("Unable to leave group!")
+                        .build();
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage()); // DEBUG
+            return SimpleResponseDTO.builder()
+                    .success(false)
+                    .message("Unable to leave group!")
                     .build();
         }
     }
