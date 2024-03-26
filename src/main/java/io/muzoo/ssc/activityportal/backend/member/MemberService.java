@@ -37,6 +37,7 @@ public class MemberService {
     public boolean leaveGroup(User currentUser, Group currentGroup) {
         try {
             if(!isMember(currentUser, currentGroup)) return false;
+            if(isOwner(currentUser, currentGroup)) return false;
             currentUser.getGroups().remove(currentGroup);
             currentGroup.setMemberCount(currentGroup.getMemberCount()-1);
             userRepository.save(currentUser);
