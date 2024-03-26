@@ -1,12 +1,7 @@
 package io.muzoo.ssc.activityportal.backend.group;
 
-import io.muzoo.ssc.activityportal.backend.user.User;
-import io.muzoo.ssc.activityportal.backend.whoami.WhoamiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
-
 import java.time.LocalDateTime;
 
 /**
@@ -20,8 +15,6 @@ public class GroupSetupService {
     private GroupRepository groupRepository;
     @Autowired
     private GroupSearchService groupSearchService;
-    @Autowired
-    private WhoamiService whoamiService;
 
     /**
      * Function to create group.
