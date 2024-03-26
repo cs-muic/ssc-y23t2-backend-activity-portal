@@ -14,7 +14,6 @@ public class MemberService {
     @Autowired
     private UserRepository userRepository;
 
-    // TODO: increment user count to group when user join/leave groups
     /**
      * Method for joining group using groupID
      * 
@@ -23,8 +22,10 @@ public class MemberService {
      */
     public boolean joinGroup(long groupID, User u, Group currentGroup) {
         try {
+            if(isMember(u, currentGroup)) return false;
             System.out.println(groupID + " " + u.getId() + " " + currentGroup.getOwnerID());
             u.getGroups().add(currentGroup);
+            currentGroup.setMemberCount(currentGroup.getMemberCount()+1);
             userRepository.save(u);
             return true;
         } catch (Exception e) {
@@ -35,7 +36,9 @@ public class MemberService {
 
     public boolean leaveGroup(User currentUser, Group currentGroup) {
         try {
+            if(!isMember(currentUser, currentGroup)) return false;
             currentUser.getGroups().remove(currentGroup);
+            currentGroup.setMemberCount(currentGroup.getMemberCount()-1);
             userRepository.save(currentUser);
             return true;
         } catch (Exception e) {
