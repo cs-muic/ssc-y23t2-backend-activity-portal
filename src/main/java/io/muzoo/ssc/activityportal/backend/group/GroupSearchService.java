@@ -5,11 +5,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * TODO:
- *  - Use a DTO for group to recieve data.
- */
-
 @Service
 public class GroupSearchService {
     @Autowired

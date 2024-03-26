@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 import io.muzoo.ssc.activityportal.backend.user.User;
 
@@ -36,5 +36,5 @@ public class Group {
     
     // @JsonManagedReference
     @ManyToMany(mappedBy = "groups", fetch= FetchType.LAZY)
-    private Set<User> users;
+    private List<User> users;
 }

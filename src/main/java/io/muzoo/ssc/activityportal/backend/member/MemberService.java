@@ -2,6 +2,9 @@ package io.muzoo.ssc.activityportal.backend.member;
 
 import io.muzoo.ssc.activityportal.backend.user.User;
 import io.muzoo.ssc.activityportal.backend.group.Group;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import io.muzoo.ssc.activityportal.backend.user.UserRepository;
@@ -31,5 +34,9 @@ public class MemberService {
             System.out.println(e.getMessage()); // DEBUG
             return false;
         }
+    }
+
+    public List<Group> fetchMyGroups(User u){
+        return u.getGroups();
     }
 }

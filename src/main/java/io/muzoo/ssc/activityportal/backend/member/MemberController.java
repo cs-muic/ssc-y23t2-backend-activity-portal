@@ -1,10 +1,16 @@
 package io.muzoo.ssc.activityportal.backend.member;
 
 import io.muzoo.ssc.activityportal.backend.group.Group;
+import io.muzoo.ssc.activityportal.backend.group.GroupListDTO;
 import io.muzoo.ssc.activityportal.backend.group.GroupSearchService;
+import io.muzoo.ssc.activityportal.backend.group.GroupSetupService;
 import io.muzoo.ssc.activityportal.backend.user.User;
 import io.muzoo.ssc.activityportal.backend.whoami.WhoamiService;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,9 +28,12 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
 
+    @Autowired
+    private GroupSetupService groupSetupService;
+
     @PostMapping("/api/group-join/{groupID}")
-    public SimpleResponseDTO joinGroup(@PathVariable long groupID){
-        //TODO: uncomment this when group-join works without ruining everything
+    public SimpleResponseDTO joinGroup(@PathVariable long groupID) {
+        // TODO: uncomment this when group-join works without ruining everything
         try {
             Group currentGroup = groupSearchService.fetchGroupByID(groupID);
             if (currentGroup == null) {
@@ -35,13 +44,13 @@ public class MemberController {
             }
 
             User u = whoamiService.getCurrentUser();
-            if(u == null) {
+            if (u == null) {
                 return SimpleResponseDTO.builder()
                         .success(false)
                         .message("User is not logged in")
                         .build();
             }
-            if(memberService.joinGroup(groupID, u, currentGroup)){
+            if (memberService.joinGroup(groupID, u, currentGroup)) {
                 return SimpleResponseDTO.builder()
                         .success(true)
                         .message("Joined group successfully!")
@@ -57,6 +66,25 @@ public class MemberController {
             return SimpleResponseDTO.builder()
                     .success(false)
                     .message("Unable to join group!")
+                    .build();
+        }
+    }
+
+    @GetMapping("/api/fetch-my-groups")
+    public GroupListDTO fetchMyGroups() {
+        try {
+            groupSetupService.cleanupGroup();
+            User u = whoamiService.getCurrentUser();
+            List<Group> groupList = memberService.fetchMyGroups(u);
+            return GroupListDTO.builder()
+                    .group(groupList)
+                    .message("Found groups")
+                    .success(true)
+                    .build();
+        } catch (Exception e) {
+            return GroupListDTO.builder()
+                    .message("Groups not found")
+                    .success(false)
                     .build();
         }
     }
