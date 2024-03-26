@@ -47,4 +47,17 @@ public class MemberService {
     public List<Group> fetchMyGroups(User u) {
         return u.getGroups();
     }
+
+    public boolean isOwner(User u, Group g) {
+        return (u.getId() == g.getOwnerID());
+    }
+
+    public boolean isMember(User u, Group g) {
+        try{
+            return u.getGroups().stream().anyMatch(groups -> groups.getId() == g.getId()); // will this actually works :(
+        } catch (Exception e) {
+            System.out.println(e.getMessage()); // DEBUG
+            return false;
+        }
+    }
 }

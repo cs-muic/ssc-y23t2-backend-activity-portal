@@ -2,6 +2,7 @@ package io.muzoo.ssc.activityportal.backend.member;
 
 import io.muzoo.ssc.activityportal.backend.group.Group;
 import io.muzoo.ssc.activityportal.backend.group.GroupListDTO;
+import io.muzoo.ssc.activityportal.backend.group.GroupRoleDTO;
 import io.muzoo.ssc.activityportal.backend.group.GroupSearchService;
 import io.muzoo.ssc.activityportal.backend.group.GroupSetupService;
 import io.muzoo.ssc.activityportal.backend.user.User;
@@ -31,7 +32,7 @@ public class MemberController {
     @Autowired
     private GroupSetupService groupSetupService;
 
-    private SimpleResponseDTO validityChecking(Group currentGroup, User u){
+    private SimpleResponseDTO validityChecking(Group currentGroup, User u) {
         if (currentGroup == null) {
             return SimpleResponseDTO.builder()
                     .success(false)
@@ -52,8 +53,9 @@ public class MemberController {
             Group currentGroup = groupSearchService.fetchGroupByID(groupID);
             User u = whoamiService.getCurrentUser();
             SimpleResponseDTO validityCheck = validityChecking(currentGroup, u);
-            
-            if ( validityCheck!= null ) return validityCheck;
+
+            if (validityCheck != null)
+                return validityCheck;
             if (memberService.joinGroup(groupID, u, currentGroup)) {
                 return SimpleResponseDTO.builder()
                         .success(true)
@@ -80,8 +82,9 @@ public class MemberController {
             Group currentGroup = groupSearchService.fetchGroupByID(groupID);
             User u = whoamiService.getCurrentUser();
             SimpleResponseDTO validityCheck = validityChecking(currentGroup, u);
-            
-            if ( validityCheck!= null ) return validityCheck;
+
+            if (validityCheck != null)
+                return validityCheck;
 
             if (memberService.leaveGroup(u, currentGroup)) {
                 return SimpleResponseDTO.builder()
@@ -119,6 +122,41 @@ public class MemberController {
                     .message("Groups not found")
                     .success(false)
                     .build();
+        }
+    }
+
+    @GetMapping("/api/get-group-role/{groupID}")
+    public GroupRoleDTO getGroupRole(@PathVariable long groupID){
+        try{
+            Group currentGroup = groupSearchService.fetchGroupByID(groupID);
+            User u = whoamiService.getCurrentUser();
+            SimpleResponseDTO validityCheck = validityChecking(currentGroup, u);
+            if ( validityCheck != null ){
+                return GroupRoleDTO.builder()
+                .success(false)
+                .message("failed to get group role.")
+                .isOwner(false)
+                .isMember(false)
+                .build();
+            }
+
+            boolean isMember = memberService.isMember(u, currentGroup);
+            boolean isOwner = memberService.isOwner(u, currentGroup);
+            return GroupRoleDTO.builder()
+                .success(true)
+                .message("successfully get group role.")
+                .isOwner(isOwner)
+                .isMember(isMember)
+                .build();
+
+        } catch (Exception e) {
+
+        return GroupRoleDTO.builder()
+            .success(false)
+            .message("failed to get group role.")
+            .isOwner(false)
+            .isMember(false)
+            .build();
         }
     }
 }
