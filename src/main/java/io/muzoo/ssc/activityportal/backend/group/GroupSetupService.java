@@ -61,6 +61,7 @@ public class GroupSetupService {
             groupRepository.deleteById(groupID);
             return true;
         } catch (Exception e) {
+            System.out.println(e); // DEBUG
             return false;
         }
     }

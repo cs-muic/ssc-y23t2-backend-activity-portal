@@ -35,6 +35,14 @@ public class Group {
     private String privateDescription;
     
     // @JsonManagedReference
+    // mappedBy ~ Not owner
     @ManyToMany(mappedBy = "groups", fetch= FetchType.LAZY)
     private List<User> users;
+
+    @PreRemove
+    private void removeUserAssociations() {
+        for (User user : this.getUsers()) {
+            user.getGroups().remove(this);
+        }
+    }
 }
