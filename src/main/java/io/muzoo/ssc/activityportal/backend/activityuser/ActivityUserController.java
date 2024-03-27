@@ -1,6 +1,7 @@
 package io.muzoo.ssc.activityportal.backend.activityuser;
 
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
+import io.muzoo.ssc.activityportal.backend.activity.ActivityMapper;
 import io.muzoo.ssc.activityportal.backend.user.UserRepository;
 import io.muzoo.ssc.activityportal.backend.activity.Activity;
 import io.muzoo.ssc.activityportal.backend.activity.ActivityDTO;
@@ -23,6 +24,8 @@ public class ActivityUserController {
     private UserRepository userRepository;
     @Autowired
     private WhoamiService whoamiService;
+    @Autowired
+    private ActivityMapper activityMapper;
 
     @GetMapping("api/user-activities")
     public Set<ActivityDTO> getUserActivities() {
@@ -32,7 +35,7 @@ public class ActivityUserController {
         if (loggedIn) {
             User user = (User) principal;
             io.muzoo.ssc.activityportal.backend.user.User u = userRepository.findFirstByUsername(user.getUsername());
-            return u.getActivities().stream().map(this::mapToDTO).collect(Collectors.toSet());
+            return u.getActivities().stream().map(activityMapper::mapToDTO).collect(Collectors.toSet());
         } else {
             return null;
         }
@@ -54,17 +57,5 @@ public class ActivityUserController {
         } catch (Exception e) {
             return SimpleResponseDTO.builder().success(false).message("Failed to unjoin activity: " + e.getMessage()).build();
         }
-    }
-
-    private ActivityDTO mapToDTO(Activity activity) {
-        ActivityDTO dto = new ActivityDTO();
-        dto.setId(activity.getId());
-        dto.setName(activity.getName());
-        dto.setStart_time(activity.getStart_time());
-        dto.setEnd_time(activity.getEnd_time());
-        dto.setCleanup_date(activity.getCleanup_date());
-        dto.setAuto_delete_overtime(activity.isAuto_delete_overtime());
-        dto.setDescription(activity.getDescription());
-        return dto;
     }
 }
