@@ -1,8 +1,6 @@
 package io.muzoo.ssc.activityportal.backend.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.muzoo.ssc.activityportal.backend.activity.Activity;
-import io.muzoo.ssc.activityportal.backend.group.Group;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
