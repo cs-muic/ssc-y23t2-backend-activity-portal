@@ -2,12 +2,11 @@ package io.muzoo.ssc.activityportal.backend.group;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
 
-/**
- * TODO: 
- *  - Use a DTO for group to recieve data.
- */
+import io.muzoo.ssc.activityportal.backend.user.User;
+import io.muzoo.ssc.activityportal.backend.member.MemberService;
+
+import java.time.LocalDateTime;
 
 @Service
 public class GroupSetupService {
@@ -15,15 +14,18 @@ public class GroupSetupService {
     private GroupRepository groupRepository;
     @Autowired
     private GroupSearchService groupSearchService;
+    @Autowired
+    private MemberService memberService;
 
     /**
      * Function to create group.
      * @param group
      * @return 
      */
-    public boolean createGroup(Group group) {
+    public boolean createGroup(Group group, User u) {
         try {
             groupRepository.save(group);
+            memberService.joinGroup(group.getId(), u, group);
             return true;
         } catch (Exception e) {
             System.out.println(e.getMessage()); // DEBUG
@@ -61,6 +63,7 @@ public class GroupSetupService {
             groupRepository.deleteById(groupID);
             return true;
         } catch (Exception e) {
+            System.out.println(e); // DEBUG
             return false;
         }
     }

@@ -1,16 +1,14 @@
 package io.muzoo.ssc.activityportal.backend.group;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 import io.muzoo.ssc.activityportal.backend.user.User;
+
 
 @Entity
 @Getter
@@ -40,6 +38,14 @@ public class Group {
     private String tagInfo;
 
     // @JsonManagedReference
+    // mappedBy ~ Not owner
     @ManyToMany(mappedBy = "groups", fetch= FetchType.LAZY)
-    private Set<User> users;
+    private List<User> users;
+
+    @PreRemove
+    private void removeUserAssociations() {
+        for (User user : this.getUsers()) {
+            user.getGroups().remove(this);
+        }
+    }
 }

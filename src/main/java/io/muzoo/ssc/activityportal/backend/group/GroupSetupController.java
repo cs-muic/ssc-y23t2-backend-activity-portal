@@ -9,10 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
 
-/**
- * TODO: Use a DTO for group instead of passing plain group over.
- */
-
 @RestController
 public class GroupSetupController {
     @Autowired
@@ -21,9 +17,17 @@ public class GroupSetupController {
     private WhoamiService whoamiService;
 
     @PostMapping("/api/group-create")
-    public SimpleResponseDTO groupCreate(@RequestBody Group group){
-        boolean result = groupSetupService.createGroup(group);
-        if(result) {
+    public SimpleResponseDTO groupCreate(@RequestBody Group group) {
+        User u = whoamiService.getCurrentUser();
+        if (u == null || u.getId() != group.getOwnerID()) {
+            return SimpleResponseDTO.builder()
+                    .success(false)
+                    .message("unable to create group!")
+                    .build();
+        }
+
+        boolean result = groupSetupService.createGroup(group, u);
+        if (result) {
             return SimpleResponseDTO.builder()
                     .success(true)
                     .message("group created successfully!")
@@ -37,10 +41,10 @@ public class GroupSetupController {
     }
 
     @PostMapping("/api/group-edit")
-    public SimpleResponseDTO groupEdit(@RequestBody Group group){
+    public SimpleResponseDTO groupEdit(@RequestBody Group group) {
         try {
             User u = whoamiService.getCurrentUser();
-            if(u == null) {
+            if (u == null) {
                 return SimpleResponseDTO.builder()
                         .success(false)
                         .message("User is not logged in")
@@ -48,13 +52,12 @@ public class GroupSetupController {
             }
             long currentUserID = u.getId();
             boolean setupResultPass = groupSetupService.editGroup(group, currentUserID);
-            if(setupResultPass){
+            if (setupResultPass) {
                 return SimpleResponseDTO.builder()
                         .success(true)
                         .message("Group has been edited successfully!")
                         .build();
-            }
-            else {
+            } else {
                 return SimpleResponseDTO.builder()
                         .success(true)
                         .message("Unable to edit group!")
@@ -64,17 +67,16 @@ public class GroupSetupController {
         } catch (Exception e) {
             return SimpleResponseDTO.builder()
                     .success(false)
-                    .message("Error occurred: "+ e.getMessage())
+                    .message("Error occurred: " + e.getMessage())
                     .build();
         }
     }
 
     @PostMapping("/api/group-delete")
-    public SimpleResponseDTO groupDelete(@RequestBody Group group){
-        //TODO: TEMP
+    public SimpleResponseDTO groupDelete(@RequestBody Group group) {
         try {
             User u = whoamiService.getCurrentUser();
-            if(u == null) {
+            if (u == null) {
                 return SimpleResponseDTO.builder()
                         .success(false)
                         .message("User is not logged in")
@@ -82,7 +84,7 @@ public class GroupSetupController {
             }
             long currentUserID = u.getId();
             boolean deleteResultPass = groupSetupService.deleteGroup(group.getId(), currentUserID);
-            if(deleteResultPass){
+            if (deleteResultPass) {
                 return SimpleResponseDTO.builder()
                         .success(true)
                         .message("Group has been deleted!")
