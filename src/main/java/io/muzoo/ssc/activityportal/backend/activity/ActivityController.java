@@ -4,10 +4,7 @@ import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
 import io.muzoo.ssc.activityportal.backend.group.GroupRepository;
 import io.muzoo.ssc.activityportal.backend.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class ActivityController {
@@ -20,8 +17,18 @@ public class ActivityController {
     private ActivityService activityService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ActivityMapper activityMapper;
 
-
+    /**
+     * Get the activity information by its id.
+     * @param activity_id the id of the activity.
+     * @return the activity information in DTO form.
+     */
+    @GetMapping("api/{activity_id}/activity")
+    public ActivityDTO getActivity(@PathVariable long activity_id) {
+        return activityRepository.findById(activity_id).map(activityMapper::mapToDTO).orElse(null);
+    }
     /**
      * @param activity Activity object to be created
      * @return SimpleResponseDTO with success/fail and message
@@ -34,6 +41,7 @@ public class ActivityController {
             return SimpleResponseDTO.builder().success(true).message("Activity created").build();
         }).orElse(SimpleResponseDTO.builder().success(false).message("Group not found").build());
     }
+
 }
 
 
