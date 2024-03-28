@@ -1,5 +1,6 @@
 package io.muzoo.ssc.activityportal.backend.activity;
 
+import io.muzoo.ssc.activityportal.backend.group.Group;
 import io.muzoo.ssc.activityportal.backend.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -32,4 +33,10 @@ public class Activity {
 
     @ManyToMany(mappedBy = "activities", fetch = FetchType.LAZY)
     private Set<User> users;
+
+
+    // Activity will now have a foreign key called group_id.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id", nullable = false)
+    private Group group;
 }

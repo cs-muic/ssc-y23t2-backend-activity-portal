@@ -1,11 +1,13 @@
 package io.muzoo.ssc.activityportal.backend.group;
 
+import io.muzoo.ssc.activityportal.backend.activity.Activity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import io.muzoo.ssc.activityportal.backend.user.User;
 
@@ -48,4 +50,8 @@ public class Group {
             user.getGroups().remove(this);
         }
     }
+
+    // The parent in the relationship is the Group, and the child is the Activity, orphanRemoval means that if the parent is removed, the child will also be removed.
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<Activity> activities;
 }
