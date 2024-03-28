@@ -1,5 +1,6 @@
 package io.muzoo.ssc.activityportal.backend.group;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.muzoo.ssc.activityportal.backend.activity.Activity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -51,5 +52,6 @@ public class Group {
 
     // The parent in the relationship is the Group, and the child is the Activity, orphanRemoval means that if the parent is removed, the child will also be removed.
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonBackReference
     private Set<Activity> activities;
 }
