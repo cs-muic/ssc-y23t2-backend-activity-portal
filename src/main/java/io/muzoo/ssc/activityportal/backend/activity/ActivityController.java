@@ -56,6 +56,20 @@ public class ActivityController {
     public SimpleResponseDTO editActivity(@RequestBody Activity activityDetail, @PathVariable long groupId, @PathVariable long activityId) {
         return activityService.editActivityDetails(activityDetail, groupId, activityId);
     }
+
+    /**
+     * Delete the activity by its id.
+     *
+     * @param activity_id the id of the activity.
+     * @return SimpleResponseDTO with success/fail and message.
+     */
+    @DeleteMapping("api/{activity_id}/activity-delete")
+    public SimpleResponseDTO deleteActivity(@PathVariable long activity_id) {
+        return activityRepository.findById(activity_id).map(activity -> {
+            activityRepository.delete(activity);
+            return SimpleResponseDTO.builder().success(true).message("Activity deleted").build();
+        }).orElse(SimpleResponseDTO.builder().success(false).message("Activity not found").build());
+    }
 }
 
 
