@@ -1,5 +1,7 @@
 package io.muzoo.ssc.activityportal.backend.activity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.muzoo.ssc.activityportal.backend.group.Group;
 import io.muzoo.ssc.activityportal.backend.user.User;
@@ -32,10 +34,12 @@ public class Activity {
     @Column(name = "description")
     private String description;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "activities", fetch = FetchType.LAZY)
     private Set<User> users;
 
 
+    @JsonIgnore
     // Activity will now have a foreign key called group_id.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", nullable = false)
