@@ -39,6 +39,5 @@ public class Activity {
     // Activity will now have a foreign key called group_id.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", nullable = false)
-    @JsonManagedReference
     private Group group;
 }

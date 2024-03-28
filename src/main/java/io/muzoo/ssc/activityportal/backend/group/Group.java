@@ -52,6 +52,5 @@ public class Group {
 
     // The parent in the relationship is the Group, and the child is the Activity, orphanRemoval means that if the parent is removed, the child will also be removed.
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JsonBackReference
     private Set<Activity> activities;
 }
