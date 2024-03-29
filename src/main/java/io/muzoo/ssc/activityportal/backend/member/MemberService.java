@@ -25,6 +25,8 @@ public class MemberService {
             if(isMember(u, currentGroup)) return false;
             System.out.println(groupID + " " + u.getId() + " " + currentGroup.getOwnerID());
             u.getGroups().add(currentGroup);
+            // Inject activity to the user who joins the group
+            u.getActivities().addAll(currentGroup.getActivities());
             currentGroup.setMemberCount(currentGroup.getMemberCount()+1);
             userRepository.save(u);
             return true;
