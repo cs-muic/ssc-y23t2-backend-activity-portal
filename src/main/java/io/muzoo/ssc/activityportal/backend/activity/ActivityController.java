@@ -8,6 +8,7 @@ import io.muzoo.ssc.activityportal.backend.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -45,6 +46,12 @@ public class ActivityController {
         return groupRepository.findById(groupId).map(group -> {
             activity.setGroup(group);
             activityRepository.save(activity);
+            // Add the activity to all the members of the group
+            List<User> members = group.getUsers();
+            members.forEach(member -> {
+                member.getActivities().add(activity);
+                userRepository.save(member);
+            });
             return SimpleResponseDTO.builder().success(true).message("Activity created").build();
         }).orElse(SimpleResponseDTO.builder().success(false).message("Group not found").build());
     }
