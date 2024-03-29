@@ -43,17 +43,7 @@ public class ActivityController {
      */
     @PostMapping("api/{groupId}/activity-create")
     public SimpleResponseDTO createActivity(@RequestBody Activity activity, @PathVariable long groupId) {
-        return groupRepository.findById(groupId).map(group -> {
-            activity.setGroup(group);
-            activityRepository.save(activity);
-            // Add the activity to all the members of the group
-            List<User> members = group.getUsers();
-            members.forEach(member -> {
-                member.getActivities().add(activity);
-                userRepository.save(member);
-            });
-            return SimpleResponseDTO.builder().success(true).message("Activity created").build();
-        }).orElse(SimpleResponseDTO.builder().success(false).message("Group not found").build());
+        return activityService.createActivity(activity, groupId);
     }
 
     /**
