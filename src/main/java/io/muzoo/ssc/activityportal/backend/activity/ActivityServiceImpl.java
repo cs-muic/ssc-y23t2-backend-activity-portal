@@ -7,7 +7,6 @@ import io.muzoo.ssc.activityportal.backend.user.User;
 import io.muzoo.ssc.activityportal.backend.whoami.WhoamiService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.task.TaskExecutionProperties;
 import org.springframework.stereotype.Service;
 
 
@@ -40,11 +39,10 @@ public class ActivityServiceImpl implements ActivityService {
         return SimpleResponseDTO.builder().success(true).message("User and group checked").build();
     }
 
-
     @Override
     public SimpleResponseDTO createActivity(Activity activity, long groupId) {
         SimpleResponseDTO checkResult = checkUserAndGroup(groupId);
-        if (checkResult!= null){
+        if (checkResult != null) {
             return checkResult;
         }
         Group group = groupRepository.findFirstById(groupId);
@@ -53,7 +51,7 @@ public class ActivityServiceImpl implements ActivityService {
         group.getActivities().add(activity);
         groupRepository.save(group);
         // Add the activity to all the users in the group
-        for (User user: group.getUsers()){
+        for (User user : group.getUsers()) {
             user.getActivities().add(activity);
         }
 
@@ -61,8 +59,8 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     public SimpleResponseDTO editActivityDetails(Activity activityDetail, long groupId, long activityId) {
-         SimpleResponseDTO checkResult = checkUserAndGroup(groupId);
-        if (checkResult!= null){
+        SimpleResponseDTO checkResult = checkUserAndGroup(groupId);
+        if (checkResult != null) {
             return checkResult;
         }
         Activity updateActivity = activityRepository.findFirstById(activityId);
@@ -83,17 +81,15 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Transactional
-    public SimpleResponseDTO deleteActivity( long activityId) {
+    public SimpleResponseDTO deleteActivity(long activityId) {
         Activity activity = activityRepository.findFirstById(activityId);
-        if (activity == null) {
-            return SimpleResponseDTO.builder().success(false).message("Activity not found").build();
-        }
         Group group = activity.getGroup();
-        User u = whoamiService.getCurrentUser();
-        if (group.getOwnerID() != u.getId()) {
-            return SimpleResponseDTO.builder().success(false).message("User is not the owner of the group").build();
+        long groupId = group.getId();
+        SimpleResponseDTO checkResult = checkUserAndGroup(groupId);
+        if (checkResult != null) {
+            return checkResult;
         }
-        for (User user: activity.getUsers()){
+        for (User user : activity.getUsers()) {
             user.getActivities().remove(activity);
         }
         group.getActivities().remove(activity);
