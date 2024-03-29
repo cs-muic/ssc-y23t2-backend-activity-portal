@@ -15,5 +15,7 @@ public interface ActivityService {
      * @return A response DTO informing whether the process was successfull or not.
      */
     SimpleResponseDTO editActivityDetails(Activity activityDetail, long groupId, long activityId);
+
+    SimpleResponseDTO deleteActivity( long activityId);
 }
 

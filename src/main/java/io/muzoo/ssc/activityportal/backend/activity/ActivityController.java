@@ -1,10 +1,15 @@
 package io.muzoo.ssc.activityportal.backend.activity;
 
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
+import io.muzoo.ssc.activityportal.backend.group.Group;
 import io.muzoo.ssc.activityportal.backend.group.GroupRepository;
+import io.muzoo.ssc.activityportal.backend.user.User;
 import io.muzoo.ssc.activityportal.backend.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
+import java.util.Set;
 
 @RestController
 public class ActivityController {
@@ -65,10 +70,7 @@ public class ActivityController {
      */
     @DeleteMapping("api/{activity_id}/activity-delete")
     public SimpleResponseDTO deleteActivity(@PathVariable long activity_id) {
-        return activityRepository.findById(activity_id).map(activity -> {
-            activityRepository.delete(activity);
-            return SimpleResponseDTO.builder().success(true).message("Activity deleted").build();
-        }).orElse(SimpleResponseDTO.builder().success(false).message("Activity not found").build());
+        return activityService.deleteActivity(activity_id);
     }
 }
 
