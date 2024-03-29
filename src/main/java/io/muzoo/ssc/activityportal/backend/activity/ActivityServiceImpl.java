@@ -7,6 +7,7 @@ import io.muzoo.ssc.activityportal.backend.user.User;
 import io.muzoo.ssc.activityportal.backend.whoami.WhoamiService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.task.TaskExecutionProperties;
 import org.springframework.stereotype.Service;
 
 
@@ -24,8 +25,7 @@ public class ActivityServiceImpl implements ActivityService {
         this.activityRepository = activityRepository;
     }
 
-    @Override
-    public SimpleResponseDTO createActivity(Activity activity, long groupId) {
+    public SimpleResponseDTO checkUserAndGroup(long groupId) {
         User u = whoamiService.getCurrentUser();
         if (u == null) {
             return SimpleResponseDTO.builder().success(false).message("User is not logged in").build();
@@ -37,6 +37,17 @@ public class ActivityServiceImpl implements ActivityService {
         if (group.getOwnerID() != u.getId()) {
             return SimpleResponseDTO.builder().success(false).message("User is not the owner of the group").build();
         }
+        return SimpleResponseDTO.builder().success(true).message("User and group checked").build();
+    }
+
+
+    @Override
+    public SimpleResponseDTO createActivity(Activity activity, long groupId) {
+        SimpleResponseDTO checkResult = checkUserAndGroup(groupId);
+        if (checkResult!= null){
+            return checkResult;
+        }
+        Group group = groupRepository.findFirstById(groupId);
         activity.setGroup(group);
         activityRepository.save(activity);
         group.getActivities().add(activity);
@@ -50,20 +61,11 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     public SimpleResponseDTO editActivityDetails(Activity activityDetail, long groupId, long activityId) {
-        User u = whoamiService.getCurrentUser();
-        if (u == null) {
-            return SimpleResponseDTO.builder().success(false).message("User is not logged in").build();
-        }
-        Group group = groupRepository.findFirstById(groupId);
-        // Check if the group exists
-        if (group == null) {
-            return SimpleResponseDTO.builder().success(false).message("Group not found").build();
+         SimpleResponseDTO checkResult = checkUserAndGroup(groupId);
+        if (checkResult!= null){
+            return checkResult;
         }
         Activity updateActivity = activityRepository.findFirstById(activityId);
-        // Check if the user is the owner of the group
-        if (group.getOwnerID() != u.getId()) {
-            return SimpleResponseDTO.builder().success(false).message("User is not the owner of the group").build();
-        }
         // Check if the activity exists
         if (updateActivity == null) {
             return SimpleResponseDTO.builder().success(false).message("Activity not found").build();
