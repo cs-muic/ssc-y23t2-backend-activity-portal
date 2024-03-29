@@ -9,6 +9,13 @@ public class ProfileViewService {
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * View the profile of the user
+     *
+     * @param username the username of the user
+     * @return the user object
+     */
+
     public User viewProfile(String username) {
         return userRepository.findFirstByUsername(username);
     }

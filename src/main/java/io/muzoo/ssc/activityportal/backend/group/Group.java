@@ -37,7 +37,9 @@ public class Group {
     private String publicDescription;
     @Column(name="private_description")
     private String privateDescription;
-    
+    @Column(name="tag_info")
+    private String tagInfo;
+
     // @JsonManagedReference
     // mappedBy ~ Not owner
     @ManyToMany(mappedBy = "groups", fetch= FetchType.LAZY)
