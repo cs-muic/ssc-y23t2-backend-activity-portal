@@ -14,6 +14,7 @@ public class ActivityMapper {
         dto.setCleanup_date(activity.getCleanup_date());
         dto.setAuto_delete_overtime(activity.isAuto_delete_overtime());
         dto.setDescription(activity.getDescription());
+        dto.setStatus(activity.getStatus());
         return dto;
     }
 }

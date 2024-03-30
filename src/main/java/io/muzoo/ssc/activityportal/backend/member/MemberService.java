@@ -44,6 +44,8 @@ public class MemberService {
             if(isOwner(currentUser, currentGroup)) return false;
             currentUser.getGroups().remove(currentGroup);
             currentGroup.setMemberCount(currentGroup.getMemberCount()-1);
+            // Remove all activities from the user who leaves the group
+            currentUser.getActivities().removeAll(currentGroup.getActivities());
             userRepository.save(currentUser);
             return true;
         } catch (Exception e) {

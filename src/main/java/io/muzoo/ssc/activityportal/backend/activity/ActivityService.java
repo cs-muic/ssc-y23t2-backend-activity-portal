@@ -7,6 +7,21 @@ import org.springframework.stereotype.Service;
 @Service
 public interface ActivityService {
     /**
+     * Used for initial checks such as group owner and group existence before performing CRUD operations.
+     * @param groupId the groupID that the activity belongs to.
+     * @return A response DTO informing whether the process was successfull or not.
+     */
+    SimpleResponseDTO checkUserAndGroup(long groupId);
+
+    /**
+     * Create an activity.
+     * @param activityDetail the activity to be created.
+     * @param groupId the groupID that the activity belongs to.
+     * @return A response DTO informing whether the process was successfull or not.
+     *
+     */
+    SimpleResponseDTO createActivity(Activity activityDetail, long groupId);
+    /**
      * Edit an activity.
      *
      * @param activityDetail the activity to be edited.
@@ -16,6 +31,17 @@ public interface ActivityService {
      */
     SimpleResponseDTO editActivityDetails(Activity activityDetail, long groupId, long activityId);
 
+    /**
+     * Delete an activity.
+     *
+     * @param activityId the activity ID for the activity to be deleted.
+     * @return A response DTO informing whether the process was successfull or not.
+     */
     SimpleResponseDTO deleteActivity( long activityId);
+
+    /**
+     * Update the status of an activity.
+     */
+    void updateActivityStatus();
 }
 

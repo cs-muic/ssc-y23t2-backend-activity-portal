@@ -1,8 +1,7 @@
 package io.muzoo.ssc.activityportal.backend.activity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.muzoo.ssc.activityportal.backend.group.Group;
 import io.muzoo.ssc.activityportal.backend.user.User;
 import jakarta.persistence.*;
@@ -24,8 +23,10 @@ public class Activity {
     @Column(name = "name")
     private String name;
     @Column(name = "start_time")
+    @JsonFormat(pattern = "M/d/yyyy, h:mm:ss a")
     private LocalDateTime start_time;
     @Column(name = "end_time")
+    @JsonFormat(pattern = "M/d/yyyy, h:mm:ss a")
     private LocalDateTime end_time;
     @Column(name = "cleanup_date")
     private LocalDateTime cleanup_date;
@@ -33,6 +34,8 @@ public class Activity {
     private boolean auto_delete_overtime;
     @Column(name = "description")
     private String description;
+    @Column(name = "status")
+    private String status;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "activities", fetch = FetchType.LAZY)
