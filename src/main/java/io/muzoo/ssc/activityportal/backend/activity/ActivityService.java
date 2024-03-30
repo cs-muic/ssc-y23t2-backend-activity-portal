@@ -38,5 +38,6 @@ public interface ActivityService {
      * @return A response DTO informing whether the process was successfull or not.
      */
     SimpleResponseDTO deleteActivity( long activityId);
+
 }
 

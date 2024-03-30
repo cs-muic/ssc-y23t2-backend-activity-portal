@@ -33,6 +33,9 @@ public class Activity {
     private boolean auto_delete_overtime;
     @Column(name = "description")
     private String description;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private ActivityStatus status;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "activities", fetch = FetchType.LAZY)

@@ -96,4 +96,5 @@ public class ActivityServiceImpl implements ActivityService {
         activityRepository.delete(activity);
         return SimpleResponseDTO.builder().success(true).message("Activity deleted").build();
     }
+
 }
