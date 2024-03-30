@@ -1,5 +1,6 @@
 package io.muzoo.ssc.activityportal.backend.group;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.muzoo.ssc.activityportal.backend.activity.Activity;
 import jakarta.persistence.*;
@@ -56,4 +57,14 @@ public class Group {
     @JsonIgnore
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Activity> activities;
+
+    //members
+    @JsonBackReference
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "tbl_user_group",
+            joinColumns = @JoinColumn(name = "group_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id")
+    )
+    private List<User> members;
 }
