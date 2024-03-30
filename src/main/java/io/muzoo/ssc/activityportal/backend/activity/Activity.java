@@ -32,8 +32,7 @@ public class Activity {
     @Column(name = "description")
     private String description;
     @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private ActivityStatus status;
+    private String status;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "activities", fetch = FetchType.LAZY)

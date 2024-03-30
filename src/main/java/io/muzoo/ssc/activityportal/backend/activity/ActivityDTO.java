@@ -2,10 +2,12 @@ package io.muzoo.ssc.activityportal.backend.activity;
 
 import lombok.Getter;
 import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Setter
 @Getter
+
 public class ActivityDTO {
     private long id;
     private String name;
@@ -14,4 +16,5 @@ public class ActivityDTO {
     private LocalDateTime cleanup_date;
     private boolean auto_delete_overtime;
     private String description;
+    private String status;
 }
