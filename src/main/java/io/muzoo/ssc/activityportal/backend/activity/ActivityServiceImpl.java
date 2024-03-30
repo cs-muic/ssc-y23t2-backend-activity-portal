@@ -46,6 +46,21 @@ public class ActivityServiceImpl implements ActivityService {
         return SimpleResponseDTO.builder().success(true).message("User and group checked").build();
     }
 
+    @Scheduled(fixedRate = 60000) // Updates every minute
+    public void updateActivityStatus() {
+        LocalDateTime now = LocalDateTime.now();
+        // Get all activities
+        Iterable<Activity> activities = activityRepository.findAll();
+        for (Activity activity : activities) {
+            if (now.isBefore(activity.getStart_time())) {
+                activity.setStatus(ActivityStatus.PENDING);
+            } else if (now.isAfter(activity.getStart_time()) && now.isBefore(activity.getEnd_time())) {
+                activity.setStatus(ActivityStatus.ONGOING);
+            } else if (now.isAfter(activity.getEnd_time())) {
+                activity.setStatus(ActivityStatus.COMPLETED);
+            }
+        }
+    }
     @Override
     @Transactional
     public SimpleResponseDTO createActivity(Activity activity, long groupId) {
@@ -61,6 +76,8 @@ public class ActivityServiceImpl implements ActivityService {
                 member.getActivities().add(activity);
                 userRepository.save(member);
             });
+            // Update the status of the activity
+            updateActivityStatus();
             return SimpleResponseDTO.builder().success(true).message("Activity created").build();
         }).orElse(SimpleResponseDTO.builder().success(false).message("Group not found").build());
     }
@@ -106,19 +123,4 @@ public class ActivityServiceImpl implements ActivityService {
         return SimpleResponseDTO.builder().success(true).message("Activity deleted").build();
     }
 
-    @Scheduled(fixedRate = 60000) // Updates every minute
-    public void updateActivityStatus() {
-        LocalDateTime now = LocalDateTime.now();
-        // Get all activities
-        Iterable<Activity> activities = activityRepository.findAll();
-        for (Activity activity : activities) {
-            if (now.isBefore(activity.getStart_time())) {
-                activity.setStatus(ActivityStatus.PENDING);
-            } else if (now.isAfter(activity.getStart_time()) && now.isBefore(activity.getEnd_time())) {
-                activity.setStatus(ActivityStatus.ONGOING);
-            } else if (now.isAfter(activity.getEnd_time())) {
-                activity.setStatus(ActivityStatus.COMPLETED);
-            }
-        }
-    }
 }
