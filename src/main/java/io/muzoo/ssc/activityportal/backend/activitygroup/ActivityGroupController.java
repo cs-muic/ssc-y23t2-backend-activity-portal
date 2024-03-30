@@ -1,9 +1,6 @@
 package io.muzoo.ssc.activityportal.backend.activitygroup;
 
 import io.muzoo.ssc.activityportal.backend.activity.*;
-import io.muzoo.ssc.activityportal.backend.group.GroupRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,14 +11,8 @@ import java.util.stream.Collectors;
 
 @RestController
 public class ActivityGroupController {
-    private static final Logger logger = LoggerFactory.getLogger(ActivityGroupController.class);
-    @Autowired
-    private ActivityRepository activityRepository;
-    @Autowired
-    private GroupRepository groupRepository;
     @Autowired
     private ActivityGroupService activityGroupService;
-    private ActivityGroupResponseDTO activityGroupResponseDTO;
     @Autowired
    private ActivityMapper activityMapper;
     @Autowired

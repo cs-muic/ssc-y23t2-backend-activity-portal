@@ -1,15 +1,8 @@
 package io.muzoo.ssc.activityportal.backend.activity;
 
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
-import io.muzoo.ssc.activityportal.backend.group.GroupRepository;
-import io.muzoo.ssc.activityportal.backend.user.User;
-import io.muzoo.ssc.activityportal.backend.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @RestController
 public class ActivityController {
@@ -17,11 +10,7 @@ public class ActivityController {
     @Autowired
     private ActivityRepository activityRepository;
     @Autowired
-    private GroupRepository groupRepository;
-    @Autowired
     private ActivityService activityService;
-    @Autowired
-    private UserRepository userRepository;
     @Autowired
     private ActivityMapper activityMapper;
 

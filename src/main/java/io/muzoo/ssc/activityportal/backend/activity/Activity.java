@@ -1,8 +1,6 @@
 package io.muzoo.ssc.activityportal.backend.activity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.muzoo.ssc.activityportal.backend.group.Group;
 import io.muzoo.ssc.activityportal.backend.user.User;
 import jakarta.persistence.*;

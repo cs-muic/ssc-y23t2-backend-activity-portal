@@ -4,5 +4,4 @@ public enum ActivityStatus {
     PENDING,
     ONGOING,
     COMPLETED,
-    CANCELLED
 }
