@@ -79,6 +79,8 @@ public class ActivityServiceImpl implements ActivityService {
         if (updateActivity.getGroup().getId() != groupId) {
             return SimpleResponseDTO.builder().success(false).message("Activity does not belong to the group").build();
         }
+
+        updateActivity.setName(activityDetail.getName());
         updateActivity.setDescription(activityDetail.getDescription());
         updateActivity.setStart_time(activityDetail.getStart_time());
         updateActivity.setEnd_time(activityDetail.getEnd_time());
