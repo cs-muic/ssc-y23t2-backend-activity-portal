@@ -68,4 +68,8 @@ public class MemberService {
             return false;
         }
     }
+
+    public List<User> getMembers(Group g) {
+        return g.getMembers();
+    }
 }
