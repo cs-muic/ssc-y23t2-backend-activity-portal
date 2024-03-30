@@ -53,11 +53,11 @@ public class ActivityServiceImpl implements ActivityService {
         Iterable<Activity> activities = activityRepository.findAll();
         for (Activity activity : activities) {
             if (now.isBefore(activity.getStart_time())) {
-                activity.setStatus(ActivityStatus.PENDING);
+                activity.setStatus("PENDING");
             } else if (now.isAfter(activity.getStart_time()) && now.isBefore(activity.getEnd_time())) {
-                activity.setStatus(ActivityStatus.ONGOING);
+                activity.setStatus("ONGOING");
             } else if (now.isAfter(activity.getEnd_time())) {
-                activity.setStatus(ActivityStatus.COMPLETED);
+                activity.setStatus("COMPLETED");
             }
         }
     }
