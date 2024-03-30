@@ -91,10 +91,11 @@ dependency-reduced-pom.xml
 *.sublime-*
 /scratch
 .gradle
-.idea
+.idea*
 README.html
 build.gradle
 gradle/
 gradlew
 gradlew.bat
 settings.gradle
+
