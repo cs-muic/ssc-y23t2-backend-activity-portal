@@ -159,4 +159,30 @@ public class MemberController {
             .build();
         }
     }
+
+    @GetMapping("/api/get-group-members/{groupID}")
+    public MemberListDTO getGroupMembers(@PathVariable long groupID){
+        try{
+            Group currentGroup = groupSearchService.fetchGroupByID(groupID);
+            if ( currentGroup == null ){
+                return MemberListDTO.builder()
+                        .success(false)
+                        .message("no such group")
+                        .build();
+            }
+            List<User> memberList = memberService.getMembers(currentGroup);
+            return MemberListDTO.builder()
+                    .success(true)
+                    .message("successfully get members.")
+                    .members(memberList)
+                    .build();
+
+        } catch (Exception e) {
+
+            return MemberListDTO.builder()
+                    .success(false)
+                    .message("failed to get members")
+                    .build();
+        }
+    }
 }
