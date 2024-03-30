@@ -1,7 +1,6 @@
 package io.muzoo.ssc.activityportal.backend.activity;
 
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
-import io.muzoo.ssc.activityportal.backend.group.Group;
 import io.muzoo.ssc.activityportal.backend.group.GroupRepository;
 import io.muzoo.ssc.activityportal.backend.user.User;
 import io.muzoo.ssc.activityportal.backend.user.UserRepository;
@@ -34,6 +33,7 @@ public class ActivityController {
      */
     @GetMapping("api/{activity_id}/activity")
     public ActivityDTO getActivity(@PathVariable long activity_id) {
+        activityService.updateActivityStatus();
         return activityRepository.findById(activity_id).map(activityMapper::mapToDTO).orElse(null);
     }
 

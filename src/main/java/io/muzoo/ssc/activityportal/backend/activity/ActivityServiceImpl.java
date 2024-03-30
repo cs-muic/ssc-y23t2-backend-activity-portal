@@ -96,7 +96,7 @@ public class ActivityServiceImpl implements ActivityService {
         if (updateActivity.getGroup().getId() != groupId) {
             return SimpleResponseDTO.builder().success(false).message("Activity does not belong to the group").build();
         }
-
+        updateActivityStatus();
         updateActivity.setName(activityDetail.getName());
         updateActivity.setDescription(activityDetail.getDescription());
         updateActivity.setStart_time(activityDetail.getStart_time());
@@ -118,6 +118,7 @@ public class ActivityServiceImpl implements ActivityService {
         for (User user : activity.getUsers()) {
             user.getActivities().remove(activity);
         }
+        updateActivityStatus();
         group.getActivities().remove(activity);
         activityRepository.delete(activity);
         return SimpleResponseDTO.builder().success(true).message("Activity deleted").build();

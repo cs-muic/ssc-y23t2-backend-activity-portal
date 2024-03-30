@@ -1,11 +1,8 @@
 package io.muzoo.ssc.activityportal.backend.activityuser;
 
 import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
-import io.muzoo.ssc.activityportal.backend.activity.ActivityMapper;
+import io.muzoo.ssc.activityportal.backend.activity.*;
 import io.muzoo.ssc.activityportal.backend.user.UserRepository;
-import io.muzoo.ssc.activityportal.backend.activity.Activity;
-import io.muzoo.ssc.activityportal.backend.activity.ActivityDTO;
-import io.muzoo.ssc.activityportal.backend.activity.ActivityRepository;
 import io.muzoo.ssc.activityportal.backend.whoami.WhoamiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,10 +25,12 @@ public class ActivityUserController {
     private WhoamiService whoamiService;
     @Autowired
     private ActivityMapper activityMapper;
+    @Autowired
+    ActivityService activityService;
 
     @GetMapping("api/user-activities")
     public Set<ActivityDTO> getUserActivities() {
-
+        activityService.updateActivityStatus();
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         boolean loggedIn = principal != null && principal instanceof User;
         if (loggedIn) {
@@ -40,24 +39,6 @@ public class ActivityUserController {
             return u.getActivities().stream().map(activityMapper::mapToDTO).collect(Collectors.toSet());
         } else {
             return null;
-        }
-    }
-
-    @PostMapping("api/unjoin-activity/{activityId}")
-    public SimpleResponseDTO unjoinActivity(@PathVariable long activityId) {
-        try {
-            // Check if user is authenticated
-            io.muzoo.ssc.activityportal.backend.user.User u = whoamiService.getCurrentUser();
-            if (u != null) {
-                Activity activity = activityRepository.findFirstById(activityId);
-                u.getActivities().remove(activity);
-                userRepository.save(u);
-                return SimpleResponseDTO.builder().success(true).message("Activity unjoined successfully").build();
-            } else {
-                return SimpleResponseDTO.builder().success(false).message("Failed to unjoin activity").build();
-            }
-        } catch (Exception e) {
-            return SimpleResponseDTO.builder().success(false).message("Failed to unjoin activity: " + e.getMessage()).build();
         }
     }
 }

@@ -1,9 +1,6 @@
 package io.muzoo.ssc.activityportal.backend.activitygroup;
 
-import io.muzoo.ssc.activityportal.backend.activity.Activity;
-import io.muzoo.ssc.activityportal.backend.activity.ActivityDTO;
-import io.muzoo.ssc.activityportal.backend.activity.ActivityMapper;
-import io.muzoo.ssc.activityportal.backend.activity.ActivityRepository;
+import io.muzoo.ssc.activityportal.backend.activity.*;
 import io.muzoo.ssc.activityportal.backend.group.GroupRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +24,8 @@ public class ActivityGroupController {
     private ActivityGroupResponseDTO activityGroupResponseDTO;
     @Autowired
    private ActivityMapper activityMapper;
+    @Autowired
+    private ActivityService activityService;
     /**
      * Gets the list of activities that a group has.
      *
@@ -34,7 +33,8 @@ public class ActivityGroupController {
      * @return the list of activities that the group has
      */
     @GetMapping("api/group-activity/{groupId}")
-    public ActivityGroupResponseDTO  getUserActivities(@PathVariable long groupId) {
+    public ActivityGroupResponseDTO  getGroupActivities(@PathVariable long groupId) {
+        activityService.updateActivityStatus();
         System.out.println(groupId);
         ActivityGroupResponseDTO response = new ActivityGroupResponseDTO();
         Set<ActivityDTO> activities = activityGroupService.getGroupActivity(groupId).stream().map(activityMapper::mapToDTO).collect(Collectors.toSet());
