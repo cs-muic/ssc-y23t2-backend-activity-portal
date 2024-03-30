@@ -39,5 +39,9 @@ public interface ActivityService {
      */
     SimpleResponseDTO deleteActivity( long activityId);
 
+    /**
+     * Update the status of an activity.
+     */
+    void updateActivityStatus();
 }
 

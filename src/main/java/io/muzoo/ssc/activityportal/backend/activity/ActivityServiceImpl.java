@@ -4,10 +4,15 @@ import io.muzoo.ssc.activityportal.backend.SimpleResponseDTO;
 import io.muzoo.ssc.activityportal.backend.group.Group;
 import io.muzoo.ssc.activityportal.backend.group.GroupRepository;
 import io.muzoo.ssc.activityportal.backend.user.User;
+import io.muzoo.ssc.activityportal.backend.user.UserRepository;
 import io.muzoo.ssc.activityportal.backend.whoami.WhoamiService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Service
@@ -16,6 +21,8 @@ public class ActivityServiceImpl implements ActivityService {
     private ActivityRepository activityRepository;
     @Autowired
     private GroupRepository groupRepository;
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private WhoamiService whoamiService;
 
@@ -40,27 +47,27 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
+    @Transactional
     public SimpleResponseDTO createActivity(Activity activity, long groupId) {
         SimpleResponseDTO checkResult = checkUserAndGroup(groupId);
-        if (checkResult != null) {
+        if (!checkResult.isSuccess()) {
             return checkResult;
         }
-        Group group = groupRepository.findFirstById(groupId);
-        activity.setGroup(group);
-        activityRepository.save(activity);
-        group.getActivities().add(activity);
-        groupRepository.save(group);
-        // Add the activity to all the users in the group
-        for (User user : group.getUsers()) {
-            user.getActivities().add(activity);
-        }
-
-        return SimpleResponseDTO.builder().success(true).message("Activity created").build();
+        return groupRepository.findById(groupId).map(group -> {
+            activity.setGroup(group);
+            activityRepository.save(activity);
+            List<User> members = group.getUsers();
+            members.forEach(member -> {
+                member.getActivities().add(activity);
+                userRepository.save(member);
+            });
+            return SimpleResponseDTO.builder().success(true).message("Activity created").build();
+        }).orElse(SimpleResponseDTO.builder().success(false).message("Group not found").build());
     }
 
     public SimpleResponseDTO editActivityDetails(Activity activityDetail, long groupId, long activityId) {
         SimpleResponseDTO checkResult = checkUserAndGroup(groupId);
-        if (checkResult != null) {
+        if (!checkResult.isSuccess()) {
             return checkResult;
         }
         Activity updateActivity = activityRepository.findFirstById(activityId);
@@ -86,7 +93,7 @@ public class ActivityServiceImpl implements ActivityService {
         Group group = activity.getGroup();
         long groupId = group.getId();
         SimpleResponseDTO checkResult = checkUserAndGroup(groupId);
-        if (checkResult != null) {
+        if (!checkResult.isSuccess()) {
             return checkResult;
         }
         for (User user : activity.getUsers()) {
@@ -97,4 +104,19 @@ public class ActivityServiceImpl implements ActivityService {
         return SimpleResponseDTO.builder().success(true).message("Activity deleted").build();
     }
 
+    @Scheduled(fixedRate = 60000) // Updates every minute
+    public void updateActivityStatus() {
+        LocalDateTime now = LocalDateTime.now();
+        // Get all activities
+        Iterable<Activity> activities = activityRepository.findAll();
+        for (Activity activity : activities) {
+            if (now.isBefore(activity.getStart_time())) {
+                activity.setStatus(ActivityStatus.PENDING);
+            } else if (now.isAfter(activity.getStart_time()) && now.isBefore(activity.getEnd_time())) {
+                activity.setStatus(ActivityStatus.ONGOING);
+            } else if (now.isAfter(activity.getEnd_time())) {
+                activity.setStatus(ActivityStatus.COMPLETED);
+            }
+        }
+    }
 }
