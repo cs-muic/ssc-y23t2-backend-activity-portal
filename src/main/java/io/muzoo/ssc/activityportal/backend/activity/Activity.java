@@ -1,5 +1,6 @@
 package io.muzoo.ssc.activityportal.backend.activity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.muzoo.ssc.activityportal.backend.group.Group;
 import io.muzoo.ssc.activityportal.backend.user.User;
@@ -22,8 +23,10 @@ public class Activity {
     @Column(name = "name")
     private String name;
     @Column(name = "start_time")
+    @JsonFormat(pattern = "M/d/yyyy, h:mm:ss a")
     private LocalDateTime start_time;
     @Column(name = "end_time")
+    @JsonFormat(pattern = "M/d/yyyy, h:mm:ss a")
     private LocalDateTime end_time;
     @Column(name = "cleanup_date")
     private LocalDateTime cleanup_date;
