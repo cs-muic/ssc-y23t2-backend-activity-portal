@@ -87,11 +87,13 @@ public class ActivityServiceImpl implements ActivityService {
         }).orElse(SimpleResponseDTO.builder().success(false).message("Group not found").build());
     }
 
+    @Transactional
     public SimpleResponseDTO editActivityDetails(Activity activityDetail, long groupId, long activityId) {
         SimpleResponseDTO checkResult = checkUserAndGroup(groupId);
         if (!checkResult.isSuccess()) {
             return checkResult;
         }
+        updateAndDeleteActivityStatus();
         Activity updateActivity = activityRepository.findFirstById(activityId);
         // Check if the activity exists
         if (updateActivity == null) {
@@ -101,7 +103,14 @@ public class ActivityServiceImpl implements ActivityService {
         if (updateActivity.getGroup().getId() != groupId) {
             return SimpleResponseDTO.builder().success(false).message("Activity does not belong to the group").build();
         }
-        updateAndDeleteActivityStatus();
+        // Check if the activity is ongoing
+        if (updateActivity.getStatus().equals("ONGOING")) {
+            return SimpleResponseDTO.builder().success(false).message("Activity is ongoing").build();
+        }
+        // Check if the activity is completed
+        if (updateActivity.getStatus().equals("COMPLETED")) {
+            return SimpleResponseDTO.builder().success(false).message("Activity is completed").build();
+        }
         updateActivity.setName(activityDetail.getName());
         updateActivity.setDescription(activityDetail.getDescription());
         updateActivity.setStart_time(activityDetail.getStart_time());
@@ -120,10 +129,18 @@ public class ActivityServiceImpl implements ActivityService {
         if (!checkResult.isSuccess()) {
             return checkResult;
         }
+        updateAndDeleteActivityStatus();
+        // Check if the activity is ongoing
+        if (activity.getStatus().equals("ONGOING")) {
+            return SimpleResponseDTO.builder().success(false).message("Activity is ongoing").build();
+        }
+        // Check if the activity is completed
+        if (activity.getStatus().equals("COMPLETED")) {
+            return SimpleResponseDTO.builder().success(false).message("Activity is completed").build();
+        }
         for (User user : activity.getUsers()) {
             user.getActivities().remove(activity);
         }
-        updateAndDeleteActivityStatus();
         group.getActivities().remove(activity);
         activityRepository.delete(activity);
         return SimpleResponseDTO.builder().success(true).message("Activity deleted").build();
