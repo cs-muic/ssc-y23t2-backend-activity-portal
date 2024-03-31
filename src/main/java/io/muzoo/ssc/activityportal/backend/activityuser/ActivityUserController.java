@@ -24,9 +24,9 @@ public class ActivityUserController {
 
     @GetMapping("api/user-activities")
     public Set<ActivityDTO> getUserActivities() {
-        activityService.updateActivityStatus();
+        activityService.updateAndDeleteActivityStatus();
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        boolean loggedIn = principal instanceof User;
+        boolean loggedIn = principal != null && principal instanceof User;
         if (loggedIn) {
             User user = (User) principal;
             io.muzoo.ssc.activityportal.backend.user.User u = userRepository.findFirstByUsername(user.getUsername());
