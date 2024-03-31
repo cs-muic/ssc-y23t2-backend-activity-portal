@@ -14,7 +14,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class AnnouncementDTO {
     private boolean success;
-    private String group;
+    private long groupID;
     private String username;
     private String message;
 }

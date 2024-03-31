@@ -19,13 +19,14 @@ public class AnnouncementController {
 	@Autowired
 	GroupSearchService groupSearchService;
 
-	@MessageMapping("/announcement")
-	@SendTo("/api/topic/announcement")
+	@MessageMapping("/messages")
+	@SendTo("/api/topic/messages")
 	public AnnouncementDTO announce_send(Announcement message) throws Exception {
+		System.out.println("SENDING MESSAGE");
 		return AnnouncementDTO.builder()
 				.success(true)
 				.message(message.getContent())
-				.group(message.getGroupName())
+				.groupID(message.getGroupID())
 				.username(message.getUsername())
 				.build();
 	}
@@ -41,7 +42,6 @@ public class AnnouncementController {
 						.build();
 			}
 			Announcement message = Announcement.builder()
-					.groupName(request.getParameter("groupName"))
 					.content(request.getParameter("content"))
 					.username(u.getUsername())
 					.groupID(Long.parseLong(request.getParameter("groupID")))

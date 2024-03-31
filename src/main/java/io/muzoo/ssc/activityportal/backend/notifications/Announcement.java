@@ -13,7 +13,6 @@ import java.beans.ConstructorProperties;
 @Jacksonized
 public class Announcement {
 	private String username;
-	private String groupName;
 	private String content;
 	private long groupID;
 }
