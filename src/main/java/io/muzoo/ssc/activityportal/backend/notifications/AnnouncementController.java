@@ -22,7 +22,6 @@ public class AnnouncementController {
 	@MessageMapping("/messages")
 	@SendTo("/api/topic/messages")
 	public AnnouncementDTO announce_send(Announcement message) throws Exception {
-		System.out.println("SENDING MESSAGE");
 		return AnnouncementDTO.builder()
 				.success(true)
 				.message(message.getContent())
