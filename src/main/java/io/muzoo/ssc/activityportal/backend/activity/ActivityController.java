@@ -22,7 +22,7 @@ public class ActivityController {
      */
     @GetMapping("api/{activity_id}/activity")
     public ActivityDTO getActivity(@PathVariable long activity_id) {
-        activityService.updateActivityStatus();
+        activityService.updateAndDeleteActivityStatus();
         return activityRepository.findById(activity_id).map(activityMapper::mapToDTO).orElse(null);
     }
 

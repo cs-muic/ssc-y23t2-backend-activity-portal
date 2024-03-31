@@ -20,7 +20,7 @@ public class ActivityGroupImpl implements ActivityGroupService {
 
     @Override
     public Set<Activity> getGroupActivity(long groupId) {
-        activityService.updateActivityStatus();
+        activityService.updateAndDeleteActivityStatus();
         System.out.println(activityRepository.findAllByGroupId(groupId));
         return activityRepository.findAllByGroupId(groupId);
     }

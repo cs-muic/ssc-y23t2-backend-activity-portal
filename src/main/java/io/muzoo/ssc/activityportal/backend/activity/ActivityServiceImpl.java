@@ -7,6 +7,7 @@ import io.muzoo.ssc.activityportal.backend.user.User;
 import io.muzoo.ssc.activityportal.backend.user.UserRepository;
 import io.muzoo.ssc.activityportal.backend.whoami.WhoamiService;
 import jakarta.transaction.Transactional;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.List;
 public class ActivityServiceImpl implements ActivityService {
     @Autowired
     private ActivityRepository activityRepository;
+
     @Autowired
     private GroupRepository groupRepository;
     @Autowired
@@ -26,10 +28,6 @@ public class ActivityServiceImpl implements ActivityService {
     @Autowired
     private WhoamiService whoamiService;
 
-    @Autowired
-    public ActivityServiceImpl(ActivityRepository activityRepository) {
-        this.activityRepository = activityRepository;
-    }
 
     public SimpleResponseDTO checkUserAndGroup(long groupId) {
         User u = whoamiService.getCurrentUser();
@@ -46,10 +44,10 @@ public class ActivityServiceImpl implements ActivityService {
         return SimpleResponseDTO.builder().success(true).message("User and group checked").build();
     }
 
-    @Scheduled(fixedRate = 60000) // Updates every minute
-    public void updateActivityStatus() {
+    @Transactional
+    @Scheduled(fixedRate = 600000) // 10 minutes
+    public void updateAndDeleteActivityStatus() {
         LocalDateTime now = LocalDateTime.now();
-        // Get all activities
         Iterable<Activity> activities = activityRepository.findAll();
         for (Activity activity : activities) {
             if (now.isBefore(activity.getStart_time())) {
@@ -58,6 +56,13 @@ public class ActivityServiceImpl implements ActivityService {
                 activity.setStatus("ONGOING");
             } else if (now.isAfter(activity.getEnd_time())) {
                 activity.setStatus("COMPLETED");
+                // Delete the activity if it is completed
+                Group group = activity.getGroup();
+                for (User user : activity.getUsers()) {
+                    user.getActivities().remove(activity);
+                }
+                group.getActivities().remove(activity);
+                activityRepository.delete(activity);
             }
         }
     }
@@ -77,7 +82,7 @@ public class ActivityServiceImpl implements ActivityService {
                 userRepository.save(member);
             });
             // Update the status of the activity
-            updateActivityStatus();
+            updateAndDeleteActivityStatus();
             return SimpleResponseDTO.builder().success(true).message("Activity created").build();
         }).orElse(SimpleResponseDTO.builder().success(false).message("Group not found").build());
     }
@@ -96,7 +101,7 @@ public class ActivityServiceImpl implements ActivityService {
         if (updateActivity.getGroup().getId() != groupId) {
             return SimpleResponseDTO.builder().success(false).message("Activity does not belong to the group").build();
         }
-        updateActivityStatus();
+        updateAndDeleteActivityStatus();
         updateActivity.setName(activityDetail.getName());
         updateActivity.setDescription(activityDetail.getDescription());
         updateActivity.setStart_time(activityDetail.getStart_time());
@@ -118,7 +123,7 @@ public class ActivityServiceImpl implements ActivityService {
         for (User user : activity.getUsers()) {
             user.getActivities().remove(activity);
         }
-        updateActivityStatus();
+        updateAndDeleteActivityStatus();
         group.getActivities().remove(activity);
         activityRepository.delete(activity);
         return SimpleResponseDTO.builder().success(true).message("Activity deleted").build();
