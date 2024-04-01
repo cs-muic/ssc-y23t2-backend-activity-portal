@@ -22,14 +22,6 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
      * @return List of activities that logged-in user has enrolled to.
      */
 
-    void deleteById(Long id);
-
-    /**
-     * Find the activity by the activityID
-     *
-     * @param id the activityID
-     * @return the activity
-     */
     Activity findFirstById(Long id);
 
     /**
@@ -39,5 +31,4 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
      * @return the activity
      */
     Set<Activity> findAllByGroupId(Long groupId);
-
 }

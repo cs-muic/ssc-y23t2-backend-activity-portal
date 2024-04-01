@@ -25,7 +25,7 @@ public class ActivityGroupController {
      */
     @GetMapping("api/group-activity/{groupId}")
     public ActivityGroupResponseDTO  getGroupActivities(@PathVariable long groupId) {
-        activityService.updateActivityStatus();
+        activityService.updateAndDeleteActivityStatus();
         System.out.println(groupId);
         ActivityGroupResponseDTO response = new ActivityGroupResponseDTO();
         Set<ActivityDTO> activities = activityGroupService.getGroupActivity(groupId).stream().map(activityMapper::mapToDTO).collect(Collectors.toSet());
