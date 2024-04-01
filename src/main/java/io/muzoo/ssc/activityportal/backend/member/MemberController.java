@@ -6,9 +6,11 @@ import io.muzoo.ssc.activityportal.backend.group.GroupRoleDTO;
 import io.muzoo.ssc.activityportal.backend.group.GroupSearchService;
 import io.muzoo.ssc.activityportal.backend.group.GroupSetupService;
 import io.muzoo.ssc.activityportal.backend.user.User;
+import io.muzoo.ssc.activityportal.backend.user.UserRepository;
 import io.muzoo.ssc.activityportal.backend.whoami.WhoamiService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +33,12 @@ public class MemberController {
 
     @Autowired
     private GroupSetupService groupSetupService;
+
+    @Autowired
+    private JoinRequestRepository joinRequestRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private SimpleResponseDTO validityChecking(Group currentGroup, User u) {
         if (currentGroup == null) {
@@ -182,6 +190,32 @@ public class MemberController {
             return MemberListDTO.builder()
                     .success(false)
                     .message("failed to get members")
+                    .build();
+        }
+    }
+
+    @GetMapping("/api/get-pending-requests/{groupID}")
+    public JoinRequestDTO getPendingRequests(@PathVariable long groupID){
+        try{
+            List<JoinRequest> requestList = joinRequestRepository.findAllByGroupIDAndStatus(groupID, 0);
+            List<JoinRequestUser> joinRequestUsers = requestList.stream().map(request -> {
+                User user = userRepository.findById(request.getUserID()).orElse(null);
+                assert user != null;
+                JoinRequestUser joinRequestUser = new JoinRequestUser();
+                joinRequestUser.setJoinRequest(request);
+                joinRequestUser.setUsername(user.getUsername());
+                joinRequestUser.setDisplayName(user.getDisplayName());
+                return joinRequestUser;
+            }).collect(Collectors.toList());
+            return JoinRequestDTO.builder()
+                    .success(true)
+                    .message("successfully get pending requests.")
+                    .joinRequests(joinRequestUsers)
+                    .build();
+        } catch (Exception e) {
+            return JoinRequestDTO.builder()
+                    .success(false)
+                    .message("failed to get pending requests.")
                     .build();
         }
     }
