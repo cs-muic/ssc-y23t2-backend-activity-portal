@@ -26,7 +26,7 @@ public class MemberService {
         try {
             if(isMember(u, currentGroup)) return false;
             if (currentGroup.getMemberCount() >= currentGroup.getMaxMember()) return false;
-            if (currentGroup.getIsPrivate() && currentGroup.getOwnerID() != u.getId()) return joinPrivateRequest(groupID, u, currentGroup);
+            if (currentGroup.getIsPrivate() && currentGroup.getOwnerID() != u.getId()) return joinPrivateRequest(groupID, u);
             System.out.println(groupID + " " + u.getId() + " " + currentGroup.getOwnerID());
             u.getGroups().add(currentGroup);
             // Inject activity to the user who joins the group
@@ -41,13 +41,12 @@ public class MemberService {
             return false;
         }
     }
-    public boolean joinPrivateRequest(long groupID, User u, Group currentGroup) {
+    public boolean joinPrivateRequest(long groupID, User u) {
         try {
             if (joinRequestRepository.existsByUserIDAndGroupID(u.getId(), groupID)) return false;
             JoinRequest joinRequest = new JoinRequest();
             joinRequest.setUserID(u.getId());
             joinRequest.setGroupID(groupID);
-            joinRequest.setStatus(0);
             joinRequestRepository.save(joinRequest);
             return true;
         }

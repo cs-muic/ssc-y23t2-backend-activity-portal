@@ -19,8 +19,4 @@ public class JoinRequest {
     @Column(name = "group_id")
     private long groupID;
 
-    // 0 = pending, 1 = accepted, 2 = rejected
-    @Column(name = "status")
-    private int status;
-
 }

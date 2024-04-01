@@ -8,5 +8,7 @@ import java.util.List;
 @Repository
 public interface JoinRequestRepository extends JpaRepository<JoinRequest, Long> {
     boolean existsByUserIDAndGroupID(long userID, long groupID);
-    List<JoinRequest> findAllByGroupIDAndStatus(long groupID, int i);
+    List<JoinRequest> findAllByGroupID(long groupID);
+
+    JoinRequest findByUserIDAndGroupID(long userID, long groupID);
 }
