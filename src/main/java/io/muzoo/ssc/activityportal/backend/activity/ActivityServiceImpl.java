@@ -7,7 +7,6 @@ import io.muzoo.ssc.activityportal.backend.user.User;
 import io.muzoo.ssc.activityportal.backend.user.UserRepository;
 import io.muzoo.ssc.activityportal.backend.whoami.WhoamiService;
 import jakarta.transaction.Transactional;
-import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -66,6 +65,27 @@ public class ActivityServiceImpl implements ActivityService {
             }
         }
     }
+
+    private SimpleResponseDTO validateActivity(Activity activity, long groupId) {
+        // Check if the activity exists
+        if (activity == null) {
+            return SimpleResponseDTO.builder().success(false).message("Activity not found").build();
+        }
+        // Check if the activity belongs to the group
+        if (activity.getGroup().getId() != groupId) {
+            return SimpleResponseDTO.builder().success(false).message("Activity does not belong to the group").build();
+        }
+        // Check if the activity is ongoing
+        if (activity.getStatus().equals("ONGOING")) {
+            return SimpleResponseDTO.builder().success(false).message("Activity is ongoing").build();
+        }
+        // Check if the activity is completed
+        if (activity.getStatus().equals("COMPLETED")) {
+            return SimpleResponseDTO.builder().success(false).message("Activity is completed").build();
+        }
+        return SimpleResponseDTO.builder().success(true).message("Activity validated").build();
+    }
+
     @Override
     @Transactional
     public SimpleResponseDTO createActivity(Activity activity, long groupId) {
@@ -88,35 +108,22 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Transactional
+
     public SimpleResponseDTO editActivityDetails(Activity activityDetail, long groupId, long activityId) {
+        Activity activity = activityRepository.findFirstById(activityId);
+        validateActivity(activity, groupId);
+
         SimpleResponseDTO checkResult = checkUserAndGroup(groupId);
         if (!checkResult.isSuccess()) {
             return checkResult;
         }
         updateAndDeleteActivityStatus();
-        Activity updateActivity = activityRepository.findFirstById(activityId);
-        // Check if the activity exists
-        if (updateActivity == null) {
-            return SimpleResponseDTO.builder().success(false).message("Activity not found").build();
-        }
-        // Check if the activity belongs to the group
-        if (updateActivity.getGroup().getId() != groupId) {
-            return SimpleResponseDTO.builder().success(false).message("Activity does not belong to the group").build();
-        }
-        // Check if the activity is ongoing
-        if (updateActivity.getStatus().equals("ONGOING")) {
-            return SimpleResponseDTO.builder().success(false).message("Activity is ongoing").build();
-        }
-        // Check if the activity is completed
-        if (updateActivity.getStatus().equals("COMPLETED")) {
-            return SimpleResponseDTO.builder().success(false).message("Activity is completed").build();
-        }
-        updateActivity.setName(activityDetail.getName());
-        updateActivity.setDescription(activityDetail.getDescription());
-        updateActivity.setStart_time(activityDetail.getStart_time());
-        updateActivity.setEnd_time(activityDetail.getEnd_time());
+        activity.setName(activityDetail.getName());
+        activity.setDescription(activityDetail.getDescription());
+        activity.setStart_time(activityDetail.getStart_time());
+        activity.setEnd_time(activityDetail.getEnd_time());
 
-        activityRepository.save(updateActivity);
+        activityRepository.save(activity);
         return SimpleResponseDTO.builder().success(true).message("Activity edited").build();
     }
 
@@ -125,18 +132,15 @@ public class ActivityServiceImpl implements ActivityService {
         Activity activity = activityRepository.findFirstById(activityId);
         Group group = activity.getGroup();
         long groupId = group.getId();
+        // Validate user and group
         SimpleResponseDTO checkResult = checkUserAndGroup(groupId);
         if (!checkResult.isSuccess()) {
             return checkResult;
         }
-        updateAndDeleteActivityStatus();
-        // Check if the activity is ongoing
-        if (activity.getStatus().equals("ONGOING")) {
-            return SimpleResponseDTO.builder().success(false).message("Activity is ongoing").build();
-        }
-        // Check if the activity is completed
-        if (activity.getStatus().equals("COMPLETED")) {
-            return SimpleResponseDTO.builder().success(false).message("Activity is completed").build();
+        // Validate activity
+        SimpleResponseDTO validateResult = validateActivity(activity, groupId);
+        if (!validateResult.isSuccess()) {
+            return validateResult;
         }
         for (User user : activity.getUsers()) {
             user.getActivities().remove(activity);
@@ -145,5 +149,4 @@ public class ActivityServiceImpl implements ActivityService {
         activityRepository.delete(activity);
         return SimpleResponseDTO.builder().success(true).message("Activity deleted").build();
     }
-
 }
