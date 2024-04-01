@@ -27,6 +27,8 @@ public class ActivityServiceImpl implements ActivityService {
     @Autowired
     private WhoamiService whoamiService;
 
+    private static final long  deleteAfterCompletionTimePeriod = 60000; // 1 minute
+
 
     public SimpleResponseDTO checkUserAndGroup(long groupId) {
         User u = whoamiService.getCurrentUser();
@@ -49,12 +51,7 @@ public class ActivityServiceImpl implements ActivityService {
         LocalDateTime now = LocalDateTime.now();
         Iterable<Activity> activities = activityRepository.findAll();
         for (Activity activity : activities) {
-            if (now.isBefore(activity.getStart_time())) {
-                activity.setStatus("PENDING");
-            } else if (now.isAfter(activity.getStart_time()) && now.isBefore(activity.getEnd_time())) {
-                activity.setStatus("ONGOING");
-            } else if (now.isAfter(activity.getEnd_time())) {
-                activity.setStatus("COMPLETED");
+            if (now.isAfter(activity.getEnd_time())&& now.isAfter(activity.getEnd_time().plusMinutes(1))){
                 // Delete the activity if it is completed
                 Group group = activity.getGroup();
                 for (User user : activity.getUsers()) {
@@ -62,6 +59,13 @@ public class ActivityServiceImpl implements ActivityService {
                 }
                 group.getActivities().remove(activity);
                 activityRepository.delete(activity);
+            }
+            if (now.isBefore(activity.getStart_time())) {
+                activity.setStatus("PENDING");
+            } else if (now.isAfter(activity.getStart_time()) && now.isBefore(activity.getEnd_time())) {
+                activity.setStatus("ONGOING");
+            } else if (now.isAfter(activity.getEnd_time())) {
+                activity.setStatus("COMPLETED");
             }
         }
     }
