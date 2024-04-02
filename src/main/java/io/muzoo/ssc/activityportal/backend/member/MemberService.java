@@ -1,5 +1,6 @@
 package io.muzoo.ssc.activityportal.backend.member;
 
+import io.muzoo.ssc.activityportal.backend.group.GroupRepository;
 import io.muzoo.ssc.activityportal.backend.user.User;
 import io.muzoo.ssc.activityportal.backend.group.Group;
 
@@ -15,6 +16,8 @@ public class MemberService {
     private UserRepository userRepository;
     @Autowired
     private JoinRequestRepository joinRequestRepository;
+    @Autowired
+    private GroupRepository groupRepository;
 
     /**
      * Method for joining group using groupID
@@ -65,6 +68,24 @@ public class MemberService {
             // Remove all activities from the user who leaves the group
             currentUser.getActivities().removeAll(currentGroup.getActivities());
             userRepository.save(currentUser);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage()); // DEBUG
+            return false;
+        }
+    }
+
+    public boolean kickMember(long GroupID, long userID) {
+        try {
+            System.out.println(GroupID + " " + userID);
+            User user = userRepository.findById(userID).orElse(null);
+            Group group = groupRepository.findById(GroupID).orElse(null);
+            if (user == null || group == null) return false;
+            if (!isMember(user, group)) return false;
+            user.getGroups().remove(group);
+            group.setMemberCount(group.getMemberCount() - 1);
+            user.getActivities().removeAll(group.getActivities());
+            userRepository.save(user);
             return true;
         } catch (Exception e) {
             System.out.println(e.getMessage()); // DEBUG
