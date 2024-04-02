@@ -281,4 +281,26 @@ public class MemberController {
                     .build();
         }
     }
+
+    @PostMapping("/api/kick-member/{groupID}/{userID}")
+    public SimpleResponseDTO kickMember(@PathVariable long groupID, @PathVariable long userID){
+        try {
+            if (memberService.kickMember(groupID, userID)) {
+                return SimpleResponseDTO.builder()
+                        .success(true)
+                        .message("Successfully kicked member.")
+                        .build();
+            } else {
+                return SimpleResponseDTO.builder()
+                        .success(false)
+                        .message("Failed to kick member.")
+                        .build();
+            }
+        } catch (Exception e) {
+            return SimpleResponseDTO.builder()
+                    .success(false)
+                    .message("Failed to kick member.")
+                    .build();
+        }
+    }
 }
