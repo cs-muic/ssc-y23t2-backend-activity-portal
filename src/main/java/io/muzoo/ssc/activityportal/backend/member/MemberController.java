@@ -79,7 +79,7 @@ public class MemberController {
 
             if (validityCheck != null)
                 return validityCheck;
-            if (memberService.joinGroup(groupID, u, currentGroup)) {
+            if (memberService.joinGroup(u, currentGroup)) {
                 return SimpleResponseDTO.builder()
                         .success(true)
                         .message("Joined group successfully!")

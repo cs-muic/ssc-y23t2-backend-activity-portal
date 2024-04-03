@@ -26,7 +26,7 @@ public class GroupSetupService {
     public boolean createGroup(Group group, User u) {
         try {
             groupRepository.save(group);
-            memberService.joinGroup(group.getId(), u, group);
+            memberService.joinGroup(u, group);
             return true;
         } catch (Exception e) {
             System.out.println(e.getMessage()); // DEBUG
