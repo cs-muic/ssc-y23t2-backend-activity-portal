@@ -58,6 +58,12 @@ public class MemberController {
             Group currentGroup = groupSearchService.fetchGroupByID(groupID);
             User u = whoamiService.getCurrentUser();
             SimpleResponseDTO validityCheck = validityChecking(currentGroup, u);
+            if(memberService.groupIsFull(currentGroup)) {
+                return SimpleResponseDTO.builder()
+                .success(false)
+                .message("Group is full!")
+                .build();
+            }
 
             if (validityCheck != null)
                 return validityCheck;
@@ -235,6 +241,13 @@ public class MemberController {
                         .success(false)
                         .message("User or group does not exist.")
                         .build();
+            }
+
+            if(memberService.groupIsFull(currentGroup)) {
+                return SimpleResponseDTO.builder()
+                .success(false)
+                .message("Group is full!")
+                .build();
             }
 
             u.getGroups().add(currentGroup);

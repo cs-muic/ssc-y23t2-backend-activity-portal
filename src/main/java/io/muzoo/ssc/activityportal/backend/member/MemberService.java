@@ -30,7 +30,8 @@ public class MemberService {
             if(isMember(u, currentGroup)) return false;
             if (currentGroup.getMemberCount() >= currentGroup.getMaxMember()) return false;
             if (currentGroup.getIsPrivate() && currentGroup.getOwnerID() != u.getId()) return joinPrivateRequest(groupID, u);
-            System.out.println(groupID + " " + u.getId() + " " + currentGroup.getOwnerID());
+            
+            System.out.println(groupID + " " + u.getId() + " " + currentGroup.getOwnerID()); // DEBUG
             u.getGroups().add(currentGroup);
             // Inject activity to the user who joins the group
             if (currentGroup.getActivities() != null) {
@@ -112,5 +113,9 @@ public class MemberService {
 
     public List<User> getMembers(Group g) {
         return g.getMembers();
+    }
+
+    public boolean groupIsFull(Group g) {
+        return (g.getMemberCount() == g.getMaxMember());
     }
 }
