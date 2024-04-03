@@ -14,8 +14,12 @@ public class GroupSearchController {
     @Autowired
     private GroupSetupService groupSetupService;
 
+    /**
+     * API for fetching all groups in the database.
+     * @return GroupListDTO contatining all groups.
+     */
     @GetMapping("/api/group-search/fetch-all-groups")
-    public GroupListDTO fetchAllGroups(){ // How about returning a new class that have group inside
+    public GroupListDTO fetchAllGroups(){ 
         try {
             groupSetupService.cleanupGroup();
             List<Group> groupList = groupSearchService.fetchAllGroups();
@@ -32,6 +36,11 @@ public class GroupSearchController {
         }
     }
 
+    /**
+     * API for fetching group with the respective ID.
+     * @param groupID (long) : The ID of the group
+     * @return GroupDTO containing group with respective groupID
+     */
     @GetMapping("/api/group-search/{groupID}")
     public GroupDTO fetchGroupByID(@PathVariable("groupID") long groupID) {
         Group group = groupSearchService.fetchGroupByID(groupID);
@@ -49,8 +58,12 @@ public class GroupSearchController {
         }
     }
 
+    /**
+     * API for fetching all groups in the database sorted based on creation time.
+     * @return GroupListDTO contatining all groups sorted based on creation time.
+     */
     @GetMapping("/api/group-all-time")
-    public GroupListDTO fetchAllGroupsTime(){ // How about returning a new class that have group inside
+    public GroupListDTO fetchAllGroupsTime(){ 
         try {
             groupSetupService.cleanupGroup();
             List<Group> groupList = groupSearchService.fetchAllGroupsByTime();
