@@ -20,17 +20,18 @@ public class MemberService {
     private GroupRepository groupRepository;
 
     /**
-     * Method for joining group using groupID
-     * 
-     * @param groupID
-     * @return
+     * Let the User join the Group
+     * @param u (User) : The user trying to join the group.
+     * @param group (Group) : The group the user is joining.
+     * @return true if succcessful, false if unsuccessful.
      */
-    public boolean joinGroup(long groupID, User u, Group currentGroup) {
+    public boolean joinGroup(User u, Group currentGroup) {
         try {
             if(isMember(u, currentGroup)) return false;
             if (currentGroup.getMemberCount() >= currentGroup.getMaxMember()) return false;
-            if (currentGroup.getIsPrivate() && currentGroup.getOwnerID() != u.getId()) return joinPrivateRequest(groupID, u);
-            System.out.println(groupID + " " + u.getId() + " " + currentGroup.getOwnerID());
+            if (currentGroup.getIsPrivate() && currentGroup.getOwnerID() != u.getId()) return joinPrivateRequest(currentGroup.getId(), u);
+            
+            System.out.println(currentGroup.getId() + " " + u.getId() + " " + currentGroup.getOwnerID()); // DEBUG
             u.getGroups().add(currentGroup);
             // Inject activity to the user who joins the group
             if (currentGroup.getActivities() != null) {
@@ -44,6 +45,13 @@ public class MemberService {
             return false;
         }
     }
+
+    /**
+     * Let the User make join request to private Group
+     * @param u (User) : The user requesting to join the group.
+     * @param groupID (long) : The groupID of the group the user is joining.
+     * @return true if succcessful, false if unsuccessful.
+     */
     public boolean joinPrivateRequest(long groupID, User u) {
         try {
             if (joinRequestRepository.existsByUserIDAndGroupID(u.getId(), groupID)) return false;
@@ -59,15 +67,24 @@ public class MemberService {
          }
     }
 
-    public boolean leaveGroup(User currentUser, Group currentGroup) {
+    /**
+     * Let the User leave the Group
+     * @param u (User) : The user trying to leave the group.
+     * @param group (Group) : The group the user is leaving.
+     * @return true if the user successfully left the group.
+     */
+    public boolean leaveGroup(User u, Group group) {
         try {
-            if(!isMember(currentUser, currentGroup)) return false;
-            if(isOwner(currentUser, currentGroup)) return false;
-            currentUser.getGroups().remove(currentGroup);
-            currentGroup.setMemberCount(currentGroup.getMemberCount()-1);
+            if(!isMember(u, group)) return false;
+            if(isOwner(u, group)) return false;
+            u.getGroups().remove(group);
+            
+            // Reduce the number of members in the group
+            group.setMemberCount(group.getMemberCount()-1);
+
             // Remove all activities from the user who leaves the group
-            currentUser.getActivities().removeAll(currentGroup.getActivities());
-            userRepository.save(currentUser);
+            u.getActivities().removeAll(group.getActivities());
+            userRepository.save(u);
             return true;
         } catch (Exception e) {
             System.out.println(e.getMessage()); // DEBUG
@@ -75,11 +92,17 @@ public class MemberService {
         }
     }
 
-    public boolean kickMember(long GroupID, long userID) {
+    /**
+     * Let the Owner kickk a user from the Group
+     * @param groupID (long) : The ID of the group.
+     * @param userID (long) : The ID of the user getting kicked.
+     * @return true if the user is successfully kicked.
+     */
+    public boolean kickMember(long groupID, long userID) {
         try {
-            System.out.println(GroupID + " " + userID);
+            System.out.println(groupID + " " + userID);
             User user = userRepository.findById(userID).orElse(null);
-            Group group = groupRepository.findById(GroupID).orElse(null);
+            Group group = groupRepository.findById(groupID).orElse(null);
             if (user == null || group == null) return false;
             if (!isMember(user, group)) return false;
             user.getGroups().remove(group);
@@ -93,14 +116,31 @@ public class MemberService {
         }
     }
 
+    /**
+     * Fetch all of the Groups the User is a member of.
+     * @param u (User) : The current user.
+     * @return List<Group> of the groups where the user is a member of.
+     */
     public List<Group> fetchMyGroups(User u) {
         return u.getGroups();
     }
 
+    /**
+     * Check if the current user is the owner of the group.
+     * @param u (User) : The current user.
+     * @param g (Group) : The current group.
+     * @return true if the user is the owner of the group.
+     */
     public boolean isOwner(User u, Group g) {
         return (u.getId() == g.getOwnerID());
     }
 
+    /**
+     * Check if the current user is a member of the group.
+     * @param u (User) : The current user.
+     * @param g (Group) : The current group.
+     * @return true if the user is a member of the group.
+     */
     public boolean isMember(User u, Group g) {
         try{
             return u.getGroups().stream().anyMatch(groups -> groups.getId() == g.getId()); // will this actually works :(
@@ -110,7 +150,21 @@ public class MemberService {
         }
     }
 
+    /**
+     * Get a list of members of the group.
+     * @param g (Group): The current group we want to get a list of members.
+     * @return List<User> of group members.
+     */
     public List<User> getMembers(Group g) {
         return g.getMembers();
+    }
+
+    /**
+     * Check whether a group is full
+     * @param g (Group): The current group.
+     * @return true if the group is full.
+     */
+    public boolean groupIsFull(Group g) {
+        return (g.getMemberCount() == g.getMaxMember());
     }
 }

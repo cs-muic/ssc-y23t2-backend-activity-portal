@@ -12,7 +12,10 @@ public class GroupScheduledDelete {
     GroupSetupService groupSetupService;
     @Autowired
     GroupSearchService groupSearchService;
-    //every 5 minutes, check to see if an entry should be deleted
+    /**
+     * Scheduling group deletion.
+     * Every 5 minutes, check to see if an entry should be deleted.
+     */
     @Scheduled(fixedDelay = 300000)
     public void scheduleFixedDelayTask() {
         groupSetupService.cleanupGroup();

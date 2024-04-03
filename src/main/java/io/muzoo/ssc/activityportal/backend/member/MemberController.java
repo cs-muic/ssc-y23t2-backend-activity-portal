@@ -37,6 +37,13 @@ public class MemberController {
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * Check the validity(existence) of the Group and the User 
+     * @param currentGroup (Group) : The current group
+     * @param u (User) : The current user
+     * @return null when successful. 
+     *          SimpleResponseDTO when failed to validate, 
+     */
     private SimpleResponseDTO validityChecking(Group currentGroup, User u) {
         if (currentGroup == null) {
             return SimpleResponseDTO.builder()
@@ -52,16 +59,27 @@ public class MemberController {
         return null;
     }
 
+    /**
+     * API for user to join group.
+     * @param groupID (long) : The group ID the user wants to join
+     * @return SimpleResponseDTO containing whether group joining is successful or unsuccessful.
+     */
     @PostMapping("/api/group-join/{groupID}")
     public SimpleResponseDTO joinGroup(@PathVariable long groupID) {
         try {
             Group currentGroup = groupSearchService.fetchGroupByID(groupID);
             User u = whoamiService.getCurrentUser();
             SimpleResponseDTO validityCheck = validityChecking(currentGroup, u);
+            if(memberService.groupIsFull(currentGroup)) {
+                return SimpleResponseDTO.builder()
+                .success(false)
+                .message("Group is full!")
+                .build();
+            }
 
             if (validityCheck != null)
                 return validityCheck;
-            if (memberService.joinGroup(groupID, u, currentGroup)) {
+            if (memberService.joinGroup(u, currentGroup)) {
                 return SimpleResponseDTO.builder()
                         .success(true)
                         .message("Joined group successfully!")
@@ -81,6 +99,11 @@ public class MemberController {
         }
     }
 
+    /**
+     * API for user to leave group.
+     * @param groupID (long) : The group ID the user wants to leave
+     * @return SimpleResponseDTO containing whether group leaving is successful or unsuccessful.
+     */
     @PostMapping("/api/group-leave/{groupID}")
     public SimpleResponseDTO leaveGroup(@PathVariable long groupID) {
         try {
@@ -111,6 +134,10 @@ public class MemberController {
         }
     }
 
+    /**
+     * API for fetching all current user's groups.
+     * @return GroupListDTO containing all the group this user is a member of.
+     */
     @GetMapping("/api/fetch-my-groups")
     public GroupListDTO fetchMyGroups() {
         try {
@@ -130,6 +157,11 @@ public class MemberController {
         }
     }
 
+    /**
+     * API for fetching the current user's role inside the group.
+     * @param groupID (long) : The group ID.
+     * @return GroupRoleDTO containing the user's role in the group.
+     */
     @GetMapping("/api/get-group-role/{groupID}")
     public GroupRoleDTO getGroupRole(@PathVariable long groupID){
         try{
@@ -165,6 +197,11 @@ public class MemberController {
         }
     }
 
+    /**
+     * API for fetching a list of all group members.
+     * @param groupID (long) : The group ID
+     * @return MemberListDTO containing the List of all users in the group.
+     */
     @GetMapping("/api/get-group-members/{groupID}")
     public MemberListDTO getGroupMembers(@PathVariable long groupID){
         try{
@@ -191,6 +228,11 @@ public class MemberController {
         }
     }
 
+    /**
+     * API for fetching the pending requests of current group (List of users requesting to join the group.)
+     * @param groupID (long) : The group ID
+     * @return JoinRequestDTO containing the list of all users requesting to join the group. 
+     */
     @GetMapping("/api/get-pending-requests/{groupID}")
     public JoinRequestDTO getPendingRequests(@PathVariable long groupID){
         try{
@@ -217,6 +259,11 @@ public class MemberController {
         }
     }
 
+    /**
+     * API for accepting users into the group.
+     * @param groupID (long) : The group ID
+     * @return SimpleResponseDTO containing the status whether the user is successfully accepted or not.
+     */
     @PostMapping("/api/accept-join-request/{groupID}/{userID}")
     public SimpleResponseDTO acceptJoinRequest(@PathVariable long groupID, @PathVariable long userID){
         try {
@@ -235,6 +282,13 @@ public class MemberController {
                         .success(false)
                         .message("User or group does not exist.")
                         .build();
+            }
+
+            if(memberService.groupIsFull(currentGroup)) {
+                return SimpleResponseDTO.builder()
+                .success(false)
+                .message("Group is full!")
+                .build();
             }
 
             u.getGroups().add(currentGroup);
@@ -256,6 +310,11 @@ public class MemberController {
         }
     }
 
+        /**
+     * API for rejecting users from the group.
+     * @param groupID (long) : The group ID
+     * @return SimpleResponseDTO containing the status whether the user is successfully rejected or not.
+     */
     @PostMapping("/api/reject-join-request/{groupID}/{userID}")
     public SimpleResponseDTO rejectJoinRequest(@PathVariable long groupID, @PathVariable long userID){
         try {
@@ -282,6 +341,12 @@ public class MemberController {
         }
     }
 
+    /**
+     * API for kicking users from the group.
+     * @param groupID (long) : The groupID
+     * @param userID (long) : The userID of the user who will be kicked
+     * @return SimpleResponseDTO containing the status whether the kicking is succcessful or not.
+     */
     @PostMapping("/api/kick-member/{groupID}/{userID}")
     public SimpleResponseDTO kickMember(@PathVariable long groupID, @PathVariable long userID){
         try {

@@ -16,6 +16,11 @@ public class GroupSetupController {
     @Autowired
     private WhoamiService whoamiService;
 
+    /**
+     * API for creating the group.
+     * @param group (Group): The group that will be created
+     * @return SimpleResponseDTO containing the status of group creation (success, failure);
+     */
     @PostMapping("/api/group-create")
     public SimpleResponseDTO groupCreate(@RequestBody Group group) {
         User u = whoamiService.getCurrentUser();
@@ -40,6 +45,11 @@ public class GroupSetupController {
         }
     }
 
+    /**
+     * API for editing the contents of the group.
+     * @param group (Group): The contents of the group that will be edited.
+     * @return SimpleResponseDTO containing the status of group editing (success, failure);
+     */
     @PostMapping("/api/group-edit")
     public SimpleResponseDTO groupEdit(@RequestBody Group group) {
         try {
@@ -72,6 +82,11 @@ public class GroupSetupController {
         }
     }
 
+    /**
+     * API for deleting the group.
+     * @param group (Group): The group that will be deleted.
+     * @return SimpleResponseDTO containing the status of group deleting (success, failure);
+     */
     @PostMapping("/api/group-delete")
     public SimpleResponseDTO groupDelete(@RequestBody Group group) {
         try {
