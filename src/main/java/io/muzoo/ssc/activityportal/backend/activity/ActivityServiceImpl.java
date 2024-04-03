@@ -17,18 +17,15 @@ import java.util.List;
 
 @Service
 public class ActivityServiceImpl implements ActivityService {
+    private static final long deleteAfterCompletionTimePeriod = 60000; // 1 minute
     @Autowired
     private ActivityRepository activityRepository;
-
     @Autowired
     private GroupRepository groupRepository;
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private WhoamiService whoamiService;
-
-    private static final long  deleteAfterCompletionTimePeriod = 60000; // 1 minute
-
 
     public SimpleResponseDTO checkUserAndGroup(long groupId) {
         User u = whoamiService.getCurrentUser();
@@ -51,16 +48,16 @@ public class ActivityServiceImpl implements ActivityService {
         LocalDateTime now = LocalDateTime.now();
         Iterable<Activity> activities = activityRepository.findAll();
         for (Activity activity : activities) {
-            if (now.isAfter(activity.getEnd_time())&& now.isAfter(activity.getEnd_time().plusMinutes(1))){
+            if (now.isAfter(activity.getEnd_time()) && now.isAfter(activity.getEnd_time().plusMinutes(1))) {
                 // Delete the activity if it is completed
                 Group group = activity.getGroup();
+                group.getActivities().remove(activity);
                 for (User user : activity.getUsers()) {
                     user.getActivities().remove(activity);
                 }
                 group.getActivities().remove(activity);
                 activityRepository.delete(activity);
-            }
-            if (now.isBefore(activity.getStart_time())) {
+            } else if (now.isBefore(activity.getStart_time())) {
                 activity.setStatus("PENDING");
             } else if (now.isAfter(activity.getStart_time()) && now.isBefore(activity.getEnd_time())) {
                 activity.setStatus("ONGOING");

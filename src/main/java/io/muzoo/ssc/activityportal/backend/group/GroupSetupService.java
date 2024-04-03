@@ -1,12 +1,13 @@
 package io.muzoo.ssc.activityportal.backend.group;
 
+import io.muzoo.ssc.activityportal.backend.activity.Activity;
+import io.muzoo.ssc.activityportal.backend.member.MemberService;
+import io.muzoo.ssc.activityportal.backend.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import io.muzoo.ssc.activityportal.backend.user.User;
-import io.muzoo.ssc.activityportal.backend.member.MemberService;
-
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Service
 public class GroupSetupService {
@@ -16,6 +17,7 @@ public class GroupSetupService {
     private GroupSearchService groupSearchService;
     @Autowired
     private MemberService memberService;
+
 
     /**
      * Create group using the group object with the user creating being the group owner.
@@ -44,7 +46,7 @@ public class GroupSetupService {
         try {
             System.out.println(group.getId() + " " + group.getOwnerID());
             Group currentGroup = groupSearchService.fetchGroupByID(group.getId());
-            if(currentGroup.getOwnerID() != currentUserID && !deleteGroupByTime(currentGroup)){
+            if (currentGroup.getOwnerID() != currentUserID && !deleteGroupByTime(currentGroup)) {
                 return false;
             }
             group.setMaxMember(currentGroup.getMaxMember());
@@ -65,8 +67,17 @@ public class GroupSetupService {
      */
     public boolean deleteGroup(long groupID, long currentUserID) {
         try {
-            if(groupSearchService.fetchGroupByID(groupID).getOwnerID() != currentUserID){
+            if (groupSearchService.fetchGroupByID(groupID).getOwnerID() != currentUserID) {
                 return false;
+            }
+            Group group = groupSearchService.fetchGroupByID(groupID);
+            // Delete all the activities in the group
+            Set<Activity> activities = groupSearchService.fetchGroupByID(groupID).getActivities();
+            for (Activity activity : activities) {
+                for (User user : activity.getUsers()) {
+                    user.getActivities().remove(activity);
+                    group.getActivities().remove(activity);
+                }
             }
             groupRepository.deleteById(groupID);
             return true;
@@ -90,7 +101,7 @@ public class GroupSetupService {
                 return true;
             }   
             return false;
-        } catch(Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }
@@ -100,11 +111,11 @@ public class GroupSetupService {
      */
     public void cleanupGroup() {
         try {
-            for (Group group:
+            for (Group group :
                     groupSearchService.fetchAllGroupsByTime()) {
                 deleteGroupByTime(group);
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
         }
     }
 }
