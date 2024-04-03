@@ -1,5 +1,6 @@
 package io.muzoo.ssc.activityportal.backend.member;
 
+import io.muzoo.ssc.activityportal.backend.group.GroupRepository;
 import io.muzoo.ssc.activityportal.backend.user.User;
 import io.muzoo.ssc.activityportal.backend.group.Group;
 
@@ -13,6 +14,10 @@ import io.muzoo.ssc.activityportal.backend.user.UserRepository;
 public class MemberService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private JoinRequestRepository joinRequestRepository;
+    @Autowired
+    private GroupRepository groupRepository;
 
     /**
      * Method for joining group using groupID
@@ -23,6 +28,8 @@ public class MemberService {
     public boolean joinGroup(long groupID, User u, Group currentGroup) {
         try {
             if(isMember(u, currentGroup)) return false;
+            if (currentGroup.getMemberCount() >= currentGroup.getMaxMember()) return false;
+            if (currentGroup.getIsPrivate() && currentGroup.getOwnerID() != u.getId()) return joinPrivateRequest(groupID, u);
             System.out.println(groupID + " " + u.getId() + " " + currentGroup.getOwnerID());
             u.getGroups().add(currentGroup);
             // Inject activity to the user who joins the group
@@ -37,6 +44,20 @@ public class MemberService {
             return false;
         }
     }
+    public boolean joinPrivateRequest(long groupID, User u) {
+        try {
+            if (joinRequestRepository.existsByUserIDAndGroupID(u.getId(), groupID)) return false;
+            JoinRequest joinRequest = new JoinRequest();
+            joinRequest.setUserID(u.getId());
+            joinRequest.setGroupID(groupID);
+            joinRequestRepository.save(joinRequest);
+            return true;
+        }
+         catch (Exception e) {
+             System.out.println(e.getMessage()); // DEBUG
+             return false;
+         }
+    }
 
     public boolean leaveGroup(User currentUser, Group currentGroup) {
         try {
@@ -47,6 +68,24 @@ public class MemberService {
             // Remove all activities from the user who leaves the group
             currentUser.getActivities().removeAll(currentGroup.getActivities());
             userRepository.save(currentUser);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage()); // DEBUG
+            return false;
+        }
+    }
+
+    public boolean kickMember(long GroupID, long userID) {
+        try {
+            System.out.println(GroupID + " " + userID);
+            User user = userRepository.findById(userID).orElse(null);
+            Group group = groupRepository.findById(GroupID).orElse(null);
+            if (user == null || group == null) return false;
+            if (!isMember(user, group)) return false;
+            user.getGroups().remove(group);
+            group.setMemberCount(group.getMemberCount() - 1);
+            user.getActivities().removeAll(group.getActivities());
+            userRepository.save(user);
             return true;
         } catch (Exception e) {
             System.out.println(e.getMessage()); // DEBUG
