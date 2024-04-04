@@ -7,6 +7,7 @@ import io.muzoo.ssc.activityportal.backend.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,7 +22,8 @@ public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(name = "creation_time")
+    @CreationTimestamp
+    @Column(name = "creation_time", updatable = false)
     private LocalDateTime creationTime;
     @Column(name = "group_name")
     private String groupName;
