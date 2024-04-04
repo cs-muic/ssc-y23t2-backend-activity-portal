@@ -10,7 +10,6 @@ import io.muzoo.ssc.activityportal.backend.user.UserRepository;
 import io.muzoo.ssc.activityportal.backend.whoami.WhoamiService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +29,6 @@ public class MemberController {
 
     @Autowired
     private GroupSetupService groupSetupService;
-
-    @Autowired
-    private JoinRequestRepository joinRequestRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -238,16 +234,8 @@ public class MemberController {
     @GetMapping("/api/get-pending-requests/{groupID}")
     public JoinRequestDTO getPendingRequests(@PathVariable long groupID){
         try{
-            List<JoinRequest> requestList = joinRequestRepository.findAllByGroupID(groupID);
-            List<JoinRequestUser> joinRequestUsers = requestList.stream().map(request -> {
-                User user = userRepository.findById(request.getUserID()).orElse(null);
-                assert user != null;
-                JoinRequestUser joinRequestUser = new JoinRequestUser();
-                joinRequestUser.setJoinRequest(request);
-                joinRequestUser.setUsername(user.getUsername());
-                joinRequestUser.setDisplayName(user.getDisplayName());
-                return joinRequestUser;
-            }).collect(Collectors.toList());
+            List<JoinRequestUser> joinRequestUsers = memberService.getAllJoinRequestUserByGroupID(groupID);
+
             return JoinRequestDTO.builder()
                     .success(true)
                     .message("successfully get pending requests.")
@@ -269,7 +257,7 @@ public class MemberController {
     @PostMapping("/api/accept-join-request/{groupID}/{userID}")
     public SimpleResponseDTO acceptJoinRequest(@PathVariable long groupID, @PathVariable long userID){
         try {
-            JoinRequest joinRequest = joinRequestRepository.findByUserIDAndGroupID(userID, groupID);
+            JoinRequest joinRequest = memberService.fetchJoinRequestByPairID(userID, groupID);
             if (joinRequest == null) {
                 return SimpleResponseDTO.builder()
                         .success(false)
@@ -290,11 +278,8 @@ public class MemberController {
                 .build();
             }
 
-            u.getGroups().add(currentGroup);
-            currentGroup.setMemberCount(currentGroup.getMemberCount()+1);
-            userRepository.save(u);
-
-            joinRequestRepository.delete(joinRequest);
+            memberService.addUserToGroup(u,currentGroup);
+            memberService.deleteJoinRequest(joinRequest);
 
             return SimpleResponseDTO.builder()
                     .success(true)
@@ -317,7 +302,7 @@ public class MemberController {
     @PostMapping("/api/reject-join-request/{groupID}/{userID}")
     public SimpleResponseDTO rejectJoinRequest(@PathVariable long groupID, @PathVariable long userID){
         try {
-            JoinRequest joinRequest = joinRequestRepository.findByUserIDAndGroupID(userID, groupID);
+            JoinRequest joinRequest = memberService.fetchJoinRequestByPairID(userID, groupID);
             if (joinRequest == null) {
                 return SimpleResponseDTO.builder()
                         .success(false)
@@ -325,11 +310,16 @@ public class MemberController {
                         .build();
             }
 
-            joinRequestRepository.delete(joinRequest);
+            if(memberService.deleteJoinRequest(joinRequest)){
+                return SimpleResponseDTO.builder()
+                .success(true)
+                .message("Successfully rejected request.")
+                .build();
+            }
 
             return SimpleResponseDTO.builder()
-                    .success(true)
-                    .message("Successfully rejected request.")
+                    .success(false)
+                    .message("Failed to reject request.")
                     .build();
 
         } catch (Exception e) {
