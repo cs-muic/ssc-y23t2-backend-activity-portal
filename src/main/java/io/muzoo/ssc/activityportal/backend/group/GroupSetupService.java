@@ -49,8 +49,11 @@ public class GroupSetupService {
             if (currentGroup.getOwnerID() != currentUserID && !deleteGroupByTime(currentGroup)) {
                 return false;
             }
-            group.setMaxMember(currentGroup.getMaxMember());
-            groupRepository.save(group);
+            currentGroup.setGroupName(group.getGroupName());
+            currentGroup.setPublicDescription(group.getPublicDescription());
+            currentGroup.setPrivateDescription(group.getPrivateDescription());
+            currentGroup.setIsPrivate(group.getIsPrivate());
+            groupRepository.save(currentGroup);
             return true;
 
         } catch (Exception e) {
