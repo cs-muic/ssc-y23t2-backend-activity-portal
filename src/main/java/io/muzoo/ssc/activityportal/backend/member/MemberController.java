@@ -70,6 +70,9 @@ public class MemberController {
             Group currentGroup = groupSearchService.fetchGroupByID(groupID);
             User u = whoamiService.getCurrentUser();
             SimpleResponseDTO validityCheck = validityChecking(currentGroup, u);
+            if (validityCheck != null)
+                return validityCheck;
+                
             if(memberService.groupIsFull(currentGroup)) {
                 return SimpleResponseDTO.builder()
                 .success(false)
@@ -77,8 +80,7 @@ public class MemberController {
                 .build();
             }
 
-            if (validityCheck != null)
-                return validityCheck;
+
             if (memberService.joinGroup(u, currentGroup)) {
                 return SimpleResponseDTO.builder()
                         .success(true)
@@ -277,12 +279,9 @@ public class MemberController {
 
             User u = userRepository.findById(userID).orElse(null);
             Group currentGroup = groupSearchService.fetchGroupByID(groupID);
-            if (u == null || currentGroup == null) {
-                return SimpleResponseDTO.builder()
-                        .success(false)
-                        .message("User or group does not exist.")
-                        .build();
-            }
+            SimpleResponseDTO validityCheck = validityChecking(currentGroup, u);
+            if (validityCheck != null)
+                return validityCheck;
 
             if(memberService.groupIsFull(currentGroup)) {
                 return SimpleResponseDTO.builder()
