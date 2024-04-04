@@ -1,0 +1,37 @@
+package io.muzoo.ssc.activityportal.backend.activityuser;
+
+import io.muzoo.ssc.activityportal.backend.activity.ActivityDTO;
+import io.muzoo.ssc.activityportal.backend.activity.ActivityMapper;
+import io.muzoo.ssc.activityportal.backend.activity.ActivityService;
+import io.muzoo.ssc.activityportal.backend.user.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.stereotype.Service;
+
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Service
+public class ActivityUserServiceImpl implements ActivityUserService{
+
+    @Autowired
+    private ActivityService activityService;
+    @Autowired
+    private ActivityMapper activityMapper;
+    @Autowired
+    private UserRepository userRepository;
+
+    public Set<ActivityDTO> getUserActivities() {
+        activityService.updateAndDeleteActivityStatus();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        boolean loggedIn = principal != null && principal instanceof User;
+        if (loggedIn) {
+            User user = (User) principal;
+            io.muzoo.ssc.activityportal.backend.user.User u = userRepository.findFirstByUsername(user.getUsername());
+            return u.getActivities().stream().map(activityMapper::mapToDTO).collect(Collectors.toSet());
+        } else {
+            return null;
+        }
+    }
+}

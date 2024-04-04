@@ -16,23 +16,10 @@ import java.util.stream.Collectors;
 @RestController
 public class ActivityUserController {
     @Autowired
-    ActivityService activityService;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private ActivityMapper activityMapper;
+    ActivityUserService activityUserService;
 
     @GetMapping("api/user-activities")
     public Set<ActivityDTO> getUserActivities() {
-        activityService.updateAndDeleteActivityStatus();
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        boolean loggedIn = principal != null && principal instanceof User;
-        if (loggedIn) {
-            User user = (User) principal;
-            io.muzoo.ssc.activityportal.backend.user.User u = userRepository.findFirstByUsername(user.getUsername());
-            return u.getActivities().stream().map(activityMapper::mapToDTO).collect(Collectors.toSet());
-        } else {
-            return null;
-        }
+        return activityUserService.getUserActivities();
     }
 }
