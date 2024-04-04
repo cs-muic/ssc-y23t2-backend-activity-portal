@@ -90,5 +90,14 @@ public class UserService {
         }
     }
 
+    /**
+     * Fetch the user based on the userID
+     * @param userID (long) : The id of the user. 
+     * @return (User) if successful, null if unsuccessful.
+     */
+    public User fetchUserByID(long userID){
+        return userRepository.findById(userID).orElse(null);
+    }
+
 
 }

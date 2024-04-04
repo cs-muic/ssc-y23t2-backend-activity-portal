@@ -6,7 +6,7 @@ import io.muzoo.ssc.activityportal.backend.group.GroupRoleDTO;
 import io.muzoo.ssc.activityportal.backend.group.GroupSearchService;
 import io.muzoo.ssc.activityportal.backend.group.GroupSetupService;
 import io.muzoo.ssc.activityportal.backend.user.User;
-import io.muzoo.ssc.activityportal.backend.user.UserRepository;
+import io.muzoo.ssc.activityportal.backend.user.UserService;
 import io.muzoo.ssc.activityportal.backend.whoami.WhoamiService;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class MemberController {
     private GroupSetupService groupSetupService;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     /**
      * Check the validity(existence) of the Group and the User 
@@ -265,7 +265,7 @@ public class MemberController {
                         .build();
             }
 
-            User u = userRepository.findById(userID).orElse(null);
+            User u = userService.fetchUserByID(userID);
             Group currentGroup = groupSearchService.fetchGroupByID(groupID);
             SimpleResponseDTO validityCheck = validityChecking(currentGroup, u);
             if (validityCheck != null)
@@ -294,7 +294,7 @@ public class MemberController {
         }
     }
 
-        /**
+    /**
      * API for rejecting users from the group.
      * @param groupID (long) : The group ID
      * @return SimpleResponseDTO containing the status whether the user is successfully rejected or not.

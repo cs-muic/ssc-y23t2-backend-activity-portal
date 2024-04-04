@@ -198,10 +198,11 @@ public class MemberService {
     }
 
     /**
+     * Fetch join Requests based on userID,groupID pair
      * 
-     * @param userID
-     * @param groupID
-     * @return
+     * @param userID  (long) : The id of the user.
+     * @param groupID (long) : The id of the group.
+     * @return JoinRequest which matches the ID pair.
      */
     JoinRequest fetchJoinRequestByPairID(long userID, long groupID) {
         return joinRequestRepository.findByUserIDAndGroupID(userID, groupID);
