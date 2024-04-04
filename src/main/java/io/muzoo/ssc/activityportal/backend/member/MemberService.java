@@ -46,6 +46,13 @@ public class MemberService {
         }
     }
 
+    /**
+     * Add the user to the current group
+     * 
+     * @param u            (User) : The user in which will be added to the group.
+     * @param currentGroup (Group) : The group the user will be added into.
+     * @return true if successful, false if unsuccessful
+     */
     public boolean addUserToGroup(User u, Group currentGroup) {
         try {
             u.getGroups().add(currentGroup);
@@ -208,6 +215,12 @@ public class MemberService {
         return joinRequestRepository.findByUserIDAndGroupID(userID, groupID);
     }
 
+    /**
+     * Delete join Request based on the object JoinRequest.
+     * 
+     * @param joinRequest (JoinRequest) : The request which will be deleted
+     * @return true if successful, false if unsuccessful.
+     */
     boolean deleteJoinRequest(JoinRequest joinRequest) {
         try {
             joinRequestRepository.delete(joinRequest);
@@ -218,10 +231,23 @@ public class MemberService {
         }
     }
 
+    /**
+     * Fetch all of the JoinRequest of the Group
+     * 
+     * @param groupID (long) : The ID of the group we wish to fetch its JoinRequests
+     * @return List containing all JoinRequest of the Group.
+     */
     List<JoinRequest> fetchAllJoinRequestByGroupID(long groupID) {
         return joinRequestRepository.findAllByGroupID(groupID);
     }
 
+    /**
+     * Get All JoinRequestUser based on GroupID
+     * 
+     * @param groupID (long) : The ID of the group we wish to retrieve the
+     *                JoinRequestUsers
+     * @return List of JoinRequestUser
+     */
     List<JoinRequestUser> getAllJoinRequestUserByGroupID(long groupID) {
         List<JoinRequest> requestList = fetchAllJoinRequestByGroupID(groupID);
         List<JoinRequestUser> joinRequestUsers = requestList.stream().map(request -> {
