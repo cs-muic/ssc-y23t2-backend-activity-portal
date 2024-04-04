@@ -11,13 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.List;
 
 
 @Service
 public class ActivityServiceImpl implements ActivityService {
-    private static final long deleteAfterCompletionTimePeriod = 60000; // 1 minute
     @Autowired
     private ActivityRepository activityRepository;
     @Autowired
@@ -45,10 +44,10 @@ public class ActivityServiceImpl implements ActivityService {
     @Transactional
     @Scheduled(fixedRate = 600000) // 10 minutes
     public void updateAndDeleteActivityStatus() {
-        LocalDateTime now = LocalDateTime.now();
+        Timestamp now = new Timestamp(System.currentTimeMillis());
         Iterable<Activity> activities = activityRepository.findAll();
         for (Activity activity : activities) {
-            if (now.isAfter(activity.getEnd_time()) && now.isAfter(activity.getEnd_time().plusMinutes(1))) {
+            if (now.after(activity.getEnd_time()) && now.after(new Timestamp(activity.getEnd_time().getTime() + 60000))) {
                 // Delete the activity if it is completed
                 Group group = activity.getGroup();
                 group.getActivities().remove(activity);
@@ -57,15 +56,16 @@ public class ActivityServiceImpl implements ActivityService {
                 }
                 group.getActivities().remove(activity);
                 activityRepository.delete(activity);
-            } else if (now.isBefore(activity.getStart_time())) {
+            } else if (now.before(activity.getStart_time())) {
                 activity.setStatus("PENDING");
-            } else if (now.isAfter(activity.getStart_time()) && now.isBefore(activity.getEnd_time())) {
+            } else if (now.after(activity.getStart_time()) && now.before(activity.getEnd_time())) {
                 activity.setStatus("ONGOING");
-            } else if (now.isAfter(activity.getEnd_time())) {
+            } else if (now.after(activity.getEnd_time())) {
                 activity.setStatus("COMPLETED");
             }
         }
     }
+
 
     private SimpleResponseDTO validateActivity(Activity activity, long groupId) {
         // Check if the activity exists
@@ -109,11 +109,12 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Transactional
-
     public SimpleResponseDTO editActivityDetails(Activity activityDetail, long groupId, long activityId) {
         Activity activity = activityRepository.findFirstById(activityId);
-        validateActivity(activity, groupId);
 
+        if (!validateActivity(activity, groupId).isSuccess()) {
+            return validateActivity(activity, groupId);
+        }
         SimpleResponseDTO checkResult = checkUserAndGroup(groupId);
         if (!checkResult.isSuccess()) {
             return checkResult;
@@ -138,15 +139,21 @@ public class ActivityServiceImpl implements ActivityService {
         if (!checkResult.isSuccess()) {
             return checkResult;
         }
-        // Validate activity
-        SimpleResponseDTO validateResult = validateActivity(activity, groupId);
-        if (!validateResult.isSuccess()) {
-            return validateResult;
+        // Check if the activity exists
+        if (activity == null) {
+            return SimpleResponseDTO.builder().success(false).message("Activity not found").build();
         }
+        // Check if the activity belongs to the group
+        if (activity.getGroup().getId() != groupId) {
+            return SimpleResponseDTO.builder().success(false).message("Activity does not belong to the group").build();
+        }
+        // Remove user association with the activity
         for (User user : activity.getUsers()) {
             user.getActivities().remove(activity);
         }
+        // Remove activity from the group
         group.getActivities().remove(activity);
+        // Delete the activity from the database
         activityRepository.delete(activity);
         return SimpleResponseDTO.builder().success(true).message("Activity deleted").build();
     }
