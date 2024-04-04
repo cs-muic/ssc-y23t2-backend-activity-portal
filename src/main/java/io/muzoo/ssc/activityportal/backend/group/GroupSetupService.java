@@ -22,7 +22,7 @@ public class GroupSetupService {
     /**
      * Create group using the group object with the user creating being the group owner.
      * @param group (Group) : The current group which is going to be created in the database.
-     * @param user (User) : The current user.
+     * @param u (User) : The current user.
      * @return (bool) true, false based on group creation status.
      */
     public boolean createGroup(Group group, User u) {
@@ -72,13 +72,16 @@ public class GroupSetupService {
             }
             Group group = groupSearchService.fetchGroupByID(groupID);
             // Delete all the activities in the group
-            Set<Activity> activities = groupSearchService.fetchGroupByID(groupID).getActivities();
+            Set<Activity> activities = group.getActivities();
             for (Activity activity : activities) {
                 for (User user : activity.getUsers()) {
                     user.getActivities().remove(activity);
-                    group.getActivities().remove(activity);
                 }
+                activity.setGroup(null);
             }
+            group.removeUserAssociations();
+            group.getActivities().clear();
+            groupRepository.save(group);
             groupRepository.deleteById(groupID);
             return true;
         } catch (Exception e) {

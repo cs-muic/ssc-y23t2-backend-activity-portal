@@ -47,7 +47,7 @@ public class Group {
     private List<User> users;
 
     @PreRemove
-    private void removeUserAssociations() {
+    void removeUserAssociations() {
         for (User user : this.getUsers()) {
             user.getGroups().remove(this);
         }
