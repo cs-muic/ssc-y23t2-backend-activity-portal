@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -24,12 +25,10 @@ public class Activity {
     private String name;
     @Column(name = "start_time")
     @JsonFormat(pattern = "M/d/yyyy, h:mm:ss a")
-    private LocalDateTime start_time;
+    private Timestamp start_time;
     @Column(name = "end_time")
     @JsonFormat(pattern = "M/d/yyyy, h:mm:ss a")
-    private LocalDateTime end_time;
-    @Column(name = "cleanup_date")
-    private LocalDateTime cleanup_date;
+    private Timestamp end_time;
     @Column(name = "auto_delete_overtime")
     private boolean auto_delete_overtime;
     @Column(name = "description")

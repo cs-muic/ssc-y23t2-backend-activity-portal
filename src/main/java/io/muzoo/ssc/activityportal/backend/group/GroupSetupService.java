@@ -53,6 +53,7 @@ public class GroupSetupService {
             currentGroup.setPublicDescription(group.getPublicDescription());
             currentGroup.setPrivateDescription(group.getPrivateDescription());
             currentGroup.setIsPrivate(group.getIsPrivate());
+            currentGroup.setTagInfo(group.getTagInfo());
             groupRepository.save(currentGroup);
             return true;
 
